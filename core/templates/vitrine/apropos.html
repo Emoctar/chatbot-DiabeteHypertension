@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos de SantéChat - Assistant Diabète et Hypertension</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#4ECDC4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        .hero-section {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        input:focus {
+            outline: none;
+        }
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1A5F7A;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+        }
+        .custom-checkbox:checked {
+            background-color: #1A5F7A;
+        }
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 6px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .source-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    {% include 'partials/header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero-section pt-28 pb-16 md:py-32" style="background-image: url('https://readdy.ai/api/search-image?query=A%2520professional%2520healthcare%2520themed%2520background%2520with%2520soft%2520blue%2520gradient%2520on%2520the%2520left%2520side%2520fading%2520into%2520a%2520clean%2520medical%2520illustration%2520on%2520the%2520right.%2520The%2520image%2520shows%2520medical%2520professionals%2520collaborating%2520with%2520digital%2520health%2520technology%252C%2520representing%2520a%2520modern%2520approach%2520to%2520healthcare.%2520The%2520left%2520side%2520has%2520ample%2520space%2520for%2520text%2520with%2520a%2520light%2520blue%2520background%2520that%2520perfectly%2520blends%2520with%2520the%2520illustration.%2520The%2520style%2520is%2520professional%252C%2520clean%252C%2520and%2520trustworthy.&width=1600&height=800&seq=about123&orientation=landscape');">
+        <div class="container mx-auto px-4">
+            <div class="hero-content w-full md:w-1/2 mb-10 md:mb-0">
+                <h1 class="font-poppins text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">À propos de SantéChat</h1>
+                <p class="text-lg md:text-xl text-gray-700 mb-8">Découvrez notre mission, notre équipe et notre engagement à fournir des informations fiables sur le diabète et l'hypertension.</p>
+                <button class="font-poppins bg-secondary text-white px-6 py-3 !rounded-button whitespace-nowrap hover:bg-secondary/90 transition-colors font-medium text-lg">En savoir plus</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-6">Notre mission</h2>
+                    <div class="w-20 h-1 bg-secondary mx-auto mb-8"></div>
+                    <p class="text-lg text-gray-700">SantéChat a été créé avec une vision claire : rendre les informations médicales fiables sur le diabète et l'hypertension accessibles à tous, à tout moment. Notre mission est de combler le fossé entre les consultations médicales et d'aider les personnes à mieux comprendre et gérer leur santé au quotidien.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="font-poppins text-2xl font-semibold text-gray-900 mb-4">Nos valeurs fondamentales</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center bg-secondary/20 rounded-full mt-1 flex-shrink-0">
+                                    <i class="ri-check-line text-secondary"></i>
+                                </div>
+                                <p class="ml-3 text-gray-700"><span class="font-medium text-gray-900">Fiabilité :</span> Toutes nos informations sont vérifiées par des professionnels de santé et basées sur les dernières recherches scientifiques.</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center bg-secondary/20 rounded-full mt-1 flex-shrink-0">
+                                    <i class="ri-check-line text-secondary"></i>
+                                </div>
+                                <p class="ml-3 text-gray-700"><span class="font-medium text-gray-900">Accessibilité :</span> Nous rendons l'information médicale compréhensible pour tous, sans jargon complexe.</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center bg-secondary/20 rounded-full mt-1 flex-shrink-0">
+                                    <i class="ri-check-line text-secondary"></i>
+                                </div>
+                                <p class="ml-3 text-gray-700"><span class="font-medium text-gray-900">Éthique :</span> Nous respectons la vie privée des utilisateurs et nous nous engageons à protéger leurs données.</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center bg-secondary/20 rounded-full mt-1 flex-shrink-0">
+                                    <i class="ri-check-line text-secondary"></i>
+                                </div>
+                                <p class="ml-3 text-gray-700"><span class="font-medium text-gray-900">Innovation :</span> Nous utilisons les technologies les plus récentes pour améliorer constamment notre service.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+                            <h3 class="font-poppins text-2xl font-semibold text-gray-900 mb-4">Notre vision</h3>
+                            <p class="text-gray-700 mb-6">Nous envisageons un monde où chaque personne atteinte de diabète ou d'hypertension dispose des connaissances nécessaires pour prendre des décisions éclairées concernant sa santé.</p>
+                            <p class="text-gray-700">SantéChat n'est pas destiné à remplacer les consultations médicales, mais à servir de complément précieux entre les rendez-vous, offrant des informations fiables et des conseils pratiques quand vous en avez besoin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sources Section -->
+    <section class="py-16 md:py-24 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-6">Nos sources d'information</h2>
+                <div class="w-20 h-1 bg-secondary mx-auto mb-8"></div>
+                <p class="text-lg text-gray-700 max-w-3xl mx-auto">Pour garantir la fiabilité de nos informations, nous nous appuyons sur des sources médicales reconnues et des partenariats avec des institutions de santé prestigieuses.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="source-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center bg-primary/10 rounded-full mb-6 mx-auto">
+                        <i class="ri-hospital-line ri-2x text-primary"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4 text-center">Organisations de santé</h3>
+                    <p class="text-gray-700 text-center mb-4">Nous nous appuyons sur les recommandations des principales organisations de santé nationales et internationales.</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <span class="bg-primary/5 text-primary text-sm px-3 py-1 rounded-full">OMS</span>
+                        <span class="bg-primary/5 text-primary text-sm px-3 py-1 rounded-full">HAS</span>
+                        <span class="bg-primary/5 text-primary text-sm px-3 py-1 rounded-full">ADA</span>
+                    </div>
+                </div>
+                
+                <div class="source-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center bg-secondary/10 rounded-full mb-6 mx-auto">
+                        <i class="ri-book-open-line ri-2x text-secondary"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4 text-center">Publications scientifiques</h3>
+                    <p class="text-gray-700 text-center mb-4">Nos informations sont basées sur des études publiées dans des revues médicales réputées et évaluées par des pairs.</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <span class="bg-secondary/5 text-secondary text-sm px-3 py-1 rounded-full">The Lancet</span>
+                        <span class="bg-secondary/5 text-secondary text-sm px-3 py-1 rounded-full">NEJM</span>
+                        <span class="bg-secondary/5 text-secondary text-sm px-3 py-1 rounded-full">JAMA</span>
+                    </div>
+                </div>
+                
+                <div class="source-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-16 h-16 flex items-center justify-center bg-[#FF9F1C]/10 rounded-full mb-6 mx-auto">
+                        <i class="ri-team-line ri-2x text-[#FF9F1C]"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4 text-center">Experts médicaux</h3>
+                    <p class="text-gray-700 text-center mb-4">Notre contenu est validé par un comité d'experts composé de médecins spécialistes et de chercheurs.</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <span class="bg-[#FF9F1C]/5 text-[#FF9F1C] text-sm px-3 py-1 rounded-full">Endocrinologues</span>
+                        <span class="bg-[#FF9F1C]/5 text-[#FF9F1C] text-sm px-3 py-1 rounded-full">Cardiologues</span>
+                        <span class="bg-[#FF9F1C]/5 text-[#FF9F1C] text-sm px-3 py-1 rounded-full">Chercheurs</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                <h3 class="font-poppins text-2xl font-semibold text-gray-900 mb-6 text-center">Notre processus de validation</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full mb-4 mx-auto font-poppins text-xl font-bold">1</div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Recherche</h4>
+                        <p class="text-gray-700">Collecte d'informations auprès de sources médicales fiables</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full mb-4 mx-auto font-poppins text-xl font-bold">2</div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Vérification</h4>
+                        <p class="text-gray-700">Examen par notre comité scientifique d'experts médicaux</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary text-white rounded-full mb-4 mx-auto font-poppins text-xl font-bold">3</div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Mise à jour</h4>
+                        <p class="text-gray-700">Révision régulière pour intégrer les dernières avancées médicales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-6">Notre équipe</h2>
+                <div class="w-20 h-1 bg-secondary mx-auto mb-8"></div>
+                <p class="text-lg text-gray-700 max-w-3xl mx-auto">SantéChat est le fruit de la collaboration entre des professionnels de santé, des chercheurs et des experts en intelligence artificielle, tous unis par la même mission : rendre l'information médicale accessible à tous.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="team-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 bg-gray-200 flex items-center justify-center">
+                        <i class="ri-user-line ri-3x text-gray-400"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2 text-center">Dr. Émilie Dupont</h3>
+                    <p class="text-gray-600 text-center mb-4">Directrice médicale</p>
+                    <p class="text-gray-700 text-center mb-4">Endocrinologue avec plus de 15 ans d'expérience dans le traitement du diabète. Ancienne chercheuse à l'INSERM.</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-linkedin-fill text-gray-600"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-twitter-x-fill text-gray-600"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 bg-gray-200 flex items-center justify-center">
+                        <i class="ri-user-line ri-3x text-gray-400"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2 text-center">Prof. Antoine Moreau</h3>
+                    <p class="text-gray-600 text-center mb-4">Conseiller scientifique</p>
+                    <p class="text-gray-700 text-center mb-4">Cardiologue spécialisé en hypertension. Professeur à la Faculté de Médecine de Paris et auteur de nombreuses publications.</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-linkedin-fill text-gray-600"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-twitter-x-fill text-gray-600"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-card bg-white p-6 rounded-lg shadow-md transition-all duration-300">
+                    <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 bg-gray-200 flex items-center justify-center">
+                        <i class="ri-user-line ri-3x text-gray-400"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2 text-center">Lucie Bertrand</h3>
+                    <p class="text-gray-600 text-center mb-4">Responsable IA</p>
+                    <p class="text-gray-700 text-center mb-4">Experte en intelligence artificielle appliquée à la santé. Anciennement chez Google Health et diplômée de l'École Polytechnique.</p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-linkedin-fill text-gray-600"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+                            <i class="ri-twitter-x-fill text-gray-600"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 max-w-5xl mx-auto">
+                <h3 class="font-poppins text-2xl font-semibold text-gray-900 mb-8 text-center">Nos partenaires scientifiques</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg mb-4 mx-auto">
+                            <i class="ri-hospital-fill ri-2x text-gray-600"></i>
+                        </div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Institut National de la Santé</h4>
+                        <p class="text-gray-700">Collaboration sur les protocoles de traitement du diabète et de l'hypertension</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg mb-4 mx-auto">
+                            <i class="ri-building-4-fill ri-2x text-gray-600"></i>
+                        </div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Université de Médecine de Lyon</h4>
+                        <p class="text-gray-700">Partenariat de recherche sur les innovations dans la gestion des maladies chroniques</p>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg mb-4 mx-auto">
+                            <i class="ri-heart-pulse-fill ri-2x text-gray-600"></i>
+                        </div>
+                        <h4 class="font-poppins text-lg font-medium text-gray-900 mb-2">Fondation Française du Cœur</h4>
+                        <p class="text-gray-700">Collaboration sur les contenus éducatifs relatifs à l'hypertension et aux maladies cardiovasculaires</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commitment Section -->
+    <section class="py-16 md:py-24 bg-primary/5">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-6">Notre engagement</h2>
+                    <div class="w-20 h-1 bg-secondary mx-auto mb-8"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="w-14 h-14 flex items-center justify-center bg-primary/10 rounded-full mb-6">
+                            <i class="ri-shield-check-line ri-2x text-primary"></i>
+                        </div>
+                        <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4">Qualité de l'information</h3>
+                        <p class="text-gray-700">Nous nous engageons à fournir uniquement des informations médicales précises, à jour et basées sur des preuves scientifiques. Chaque contenu est révisé par notre comité d'experts avant d'être intégré à notre système.</p>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="w-14 h-14 flex items-center justify-center bg-primary/10 rounded-full mb-6">
+                            <i class="ri-lock-line ri-2x text-primary"></i>
+                        </div>
+                        <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4">Protection des données</h3>
+                        <p class="text-gray-700">Nous accordons la plus haute importance à la confidentialité de vos données. Toutes les informations que vous partagez avec SantéChat sont protégées par des protocoles de sécurité avancés et ne sont jamais partagées avec des tiers sans votre consentement explicite.</p>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="w-14 h-14 flex items-center justify-center bg-primary/10 rounded-full mb-6">
+                            <i class="ri-refresh-line ri-2x text-primary"></i>
+                        </div>
+                        <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4">Amélioration continue</h3>
+                        <p class="text-gray-700">Nous nous engageons à améliorer constamment notre service en intégrant les dernières avancées médicales et technologiques. Vos retours sont essentiels pour nous aider à évoluer et à mieux répondre à vos besoins.</p>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <div class="w-14 h-14 flex items-center justify-center bg-primary/10 rounded-full mb-6">
+                            <i class="ri-hand-heart-line ri-2x text-primary"></i>
+                        </div>
+                        <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4">Accessibilité pour tous</h3>
+                        <p class="text-gray-700">Nous croyons que l'information médicale de qualité devrait être accessible à tous. C'est pourquoi nous travaillons constamment à rendre notre service aussi inclusif que possible, en proposant des options gratuites et en veillant à ce que notre interface soit facile à utiliser pour tous.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-12 bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-4">Avertissement important</h3>
+                    <p class="text-gray-700 mb-4">SantéChat fournit des informations générales à titre éducatif uniquement et ne remplace en aucun cas les conseils, diagnostics ou traitements médicaux professionnels. Consultez toujours votre médecin ou un autre professionnel de santé qualifié pour toute question concernant votre état de santé.</p>
+                    <p class="text-gray-700">En cas d'urgence médicale, contactez immédiatement les services d'urgence ou rendez-vous aux urgences les plus proches.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-primary/10 p-8 md:p-12 rounded-xl">
+                <div class="text-center">
+                    <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-6">Prêt à découvrir SantéChat ?</h2>
+                    <p class="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">Rejoignez des milliers d'utilisateurs qui bénéficient déjà d'informations fiables sur le diabète et l'hypertension.</p>
+                    <button class="font-poppins bg-primary text-white px-8 py-4 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-colors font-medium text-lg">Essayer gratuitement</button>
+                    <p class="mt-4 text-sm text-gray-600">Aucune carte de crédit requise</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'partials/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const menuButton = document.querySelector('.ri-menu-line').parentElement;
+            const nav = document.querySelector('nav');
+            
+            menuButton.addEventListener('click', () => {
+                if (nav.classList.contains('hidden')) {
+                    nav.classList.remove('hidden');
+                    nav.classList.add('flex', 'flex-col', 'absolute', 'top-16', 'left-0', 'right-0', 'bg-white', 'shadow-md', 'p-4', 'space-y-4', 'z-50');
+                } else {
+                    nav.classList.add('hidden');
+                    nav.classList.remove('flex', 'flex-col', 'absolute', 'top-16', 'left-0', 'right-0', 'bg-white', 'shadow-md', 'p-4', 'space-y-4', 'z-50');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

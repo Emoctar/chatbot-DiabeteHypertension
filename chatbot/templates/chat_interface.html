@@ -1,0 +1,691 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SantéChat - Interface de Chat</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#4ECDC4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; } /* Fallback icon */
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        input:focus {
+            outline: none;
+        }
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 1px;
+            background-color: #1A5F7A;
+            border-radius: 50%;
+            display: inline-block;
+            opacity: 0.6;
+        }
+        .typing-indicator span:nth-child(1) {
+            animation: bounce 1s infinite 0.1s;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation: bounce 1s infinite 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation: bounce 1s infinite 0.3s;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .switch-slider {
+            background-color: #1A5F7A;
+        }
+        input:checked + .switch-slider:before {
+            transform: translateX(26px);
+        }
+        .chat-message-user {
+            background-color: rgba(26, 95, 122, 0.1);
+            border-radius: 12px 12px 0 12px;
+        }
+        .chat-message-assistant {
+            background-color: white;
+            border-radius: 12px 12px 12px 0;
+        }
+        .conversation-item:hover {
+            background-color: rgba(26, 95, 122, 0.05);
+        }
+        .conversation-item.active {
+            background-color: rgba(26, 95, 122, 0.1);
+        }
+        .suggestion-chip:hover {
+            background-color: rgba(26, 95, 122, 0.2);
+        }
+        .resource-card:hover {
+            transform: translateY(-2px);
+        }
+        .sidebar-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 20px;
+        }
+        .chat-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-white shadow-sm z-10">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="{% url 'index' %}" class="flex items-center">
+                <span class="text-primary font-['Pacifico'] text-2xl">SantéChat</span>
+            </a>
+            <div class="flex items-center space-x-4">
+                <button class="hidden md:flex items-center text-gray-600 hover:text-primary transition-colors">
+                    <div class="w-8 h-8 flex items-center justify-center">
+                        <i class="ri-question-line ri-lg"></i>
+                    </div>
+                    <span class="ml-1 font-medium">Aide</span>
+                </button>
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors">
+                        <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i class="ri-user-line"></i>
+                        </div>
+                        <span class="hidden md:inline font-medium">{{ request.user }}</span>
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                    </button>
+
+                    <!-- Menu dropdown visible au survol du parent (groupe) -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg hidden group-hover:flex flex-col z-50">
+                        <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            Se déconnecter
+                        </a>
+                    </div>
+                </div>
+
+
+                <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-600" id="mobile-menu-button">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Sidebar - Conversation History (hidden on mobile) -->
+        <aside class="hidden md:block w-80 bg-white border-r border-gray-200 flex flex-col h-full" id="conversation-sidebar">
+            <div class="p-4 border-b border-gray-200">
+                <h2 class="font-poppins font-semibold text-gray-800 mb-3">Historiques</h2>
+                <div class="relative">
+                    <input type="text" placeholder="Rechercher une conversation..." class="w-full px-4 py-2 pl-10 bg-gray-100 rounded border-none focus:bg-gray-50 transition-colors text-sm">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 flex items-center justify-center text-gray-500">
+                        <i class="ri-search-line"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto sidebar-scrollbar">
+                <div class="p-2">
+                    <button class="w-full bg-primary text-white px-4 py-3 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-colors mb-4 flex items-center justify-center" id="new-conversation-btn">
+                        <div class="w-5 h-5 flex items-center justify-center mr-2">
+                            <i class="ri-add-line"></i>
+                        </div>
+                        <span>Nouvelle conversation</span>
+                    </button>
+
+                    <!-- Section pour la liste des conversations -->
+                    <div class="space-y-1" id="conversation-list">
+                        {% for conv in conversations %}
+                        <a href="{% url 'chatbot:conversation_view' conv.id %}" class="conversation-item {% if conv.id == current_conversation.id %}active{% endif %} p-3 rounded cursor-pointer block">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-medium text-gray-900 text-sm">{{ conv.title }}</h3>
+                                <span class="text-xs text-gray-500">{{ conv.updated_at|date:"d/m/Y" }}</span>
+                            </div>
+                            <p class="text-xs text-gray-600 line-clamp-2">
+                                {% with last_message=conv.messages.last %}
+                                    {% if last_message %}
+                                        {{ last_message.content|truncatechars:70 }}
+                                    {% else %}
+                                        Nouvelle conversation
+                                    {% endif %}
+                                {% endwith %}
+                            </p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <section class="flex-1 flex flex-col h-full bg-gray-50 relative" data-conversation-id="{{ current_conversation.id }}">
+            <div class="border-b border-gray-200 bg-white p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button class="md:hidden w-8 h-8 flex items-center justify-center mr-3 text-gray-600" id="show-sidebar-button">
+                        <i class="ri-menu-fold-line"></i>
+                    </button>
+                    <h1 class="font-poppins font-semibold text-gray-800">{{ current_conversation.title }}</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition-colors">
+                        <i class="ri-download-line"></i>
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-primary transition-colors md:hidden" id="show-info-button">
+                        <i class="ri-information-line"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 chat-scrollbar" id="chat-messages-container">
+                <div class="max-w-3xl mx-auto space-y-6" id="chat-messages-list">
+                    <!-- Messages -->
+                    {% for message in messages %}
+                        {% if message.role == 'user' %}
+                        <div class="flex items-start justify-end">
+                            <div class="mr-3 chat-message-user p-4 shadow-sm max-w-[85%]">
+                                <p class="text-gray-800">{{ message.content }}</p>
+                            </div>
+                            <div class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 flex-shrink-0">
+                                <i class="ri-user-line"></i>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full text-white flex-shrink-0">
+                                <i class="ri-robot-line"></i>
+                            </div>
+                            <div class="ml-3 chat-message-assistant p-4 shadow-sm max-w-[85%]">
+                                <p class="text-gray-800">{{ message.content|linebreaks }}</p>
+
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <button class="text-gray-500 hover:text-primary transition-colors flex items-center copy-btn">
+                                            <div class="w-5 h-5 flex items-center justify-center">
+                                                <i class="ri-file-copy-line"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="text-gray-500 hover:text-green-500 transition-colors flex items-center">
+                                            <div class="w-6 h-6 flex items-center justify-center">
+                                                <i class="ri-thumb-up-line"></i>
+                                            </div>
+                                        </button>
+                                        <button class="text-gray-500 hover:text-red-500 transition-colors flex items-center">
+                                            <div class="w-6 h-6 flex items-center justify-center">
+                                                <i class="ri-thumb-down-line"></i>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Indicateur de frappe (caché par défaut) -->
+                    <div class="flex items-start typing-container hidden" id="typing-indicator">
+                        <div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full text-white flex-shrink-0">
+                            <i class="ri-robot-line"></i>
+                        </div>
+                        <div class="ml-3 chat-message-assistant p-4 shadow-sm max-w-[85%]">
+                            <div class="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested Questions -->
+            <div class="bg-white border-t border-gray-200 p-3">
+                <div class="max-w-3xl mx-auto">
+                    <h3 class="text-sm font-medium text-gray-600 mb-2">Questions suggérées :</h3>
+                    <div class="flex flex-wrap gap-2" id="suggestion-chips-container">
+                        <button class="suggestion-chip bg-gray-100 text-gray-800 px-3 py-1.5 rounded-full text-sm hover:bg-primary/10 transition-colors">
+                            Quels aliments éviter avec le diabète ?
+                        </button>
+                        <button class="suggestion-chip bg-gray-100 text-gray-800 px-3 py-1.5 rounded-full text-sm hover:bg-primary/10 transition-colors">
+                            Comment gérer l'hypertension naturellement ?
+                        </button>
+                        <button class="suggestion-chip bg-gray-100 text-gray-800 px-3 py-1.5 rounded-full text-sm hover:bg-primary/10 transition-colors">
+                            Exercices recommandés pour diabétiques
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="bg-white border-t border-gray-200 p-4">
+                <div class="max-w-3xl mx-auto">
+                    <form class="relative" id="message-form">
+                        {% csrf_token %}
+                        <input type="text" name="message" id="message-input" placeholder="Écrivez votre message ici..." class="w-full px-4 py-3 pr-12 bg-gray-100 rounded-button border-none focus:bg-gray-50 transition-colors">
+                        <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-primary">
+                            <i class="ri-send-plane-fill ri-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        //
+        async function sendMessage(conversationId, message) {
+          try {
+            // Logic to send the message using the provided conversationId
+            await botFramework.sendMessage(conversationId, message);
+          } catch (error) {
+            if (error.code === "ConversationNotFound") { // Handling Microsoft specific error codes
+              console.error("Conversation not found:", conversationId);
+              // Attempt to create a new conversation or notify the user
+              // Re-initialize conversation
+            } else {
+              console.error("Error sending message:", error);
+              // Handle other types of errors
+            }
+          }
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const messageForm = document.getElementById('message-form');
+            const messageInput = document.getElementById('message-input');
+            const chatMessagesList = document.getElementById('chat-messages-list');
+            const chatMessagesContainer = document.getElementById('chat-messages-container');
+            const typingIndicator = document.getElementById('typing-indicator');
+        
+            // Méthode fiable pour récupérer l'ID de conversation
+            let conversationId = null;
+            
+            // Option 1: Extraire directement de l'URL de la page
+            const pathname = window.location.pathname;
+            const urlMatch = pathname.match(/\/chat\/conversation\/(\d+)/);
+            if (urlMatch && urlMatch[1]) {
+                conversationId = urlMatch[1];
+                console.log('Conversation ID from URL:', conversationId);
+            }
+            
+            // Option 2: Chercher dans l'attribut data d'une section
+            if (!conversationId) {
+                const conversationSection = document.querySelector('section[data-conversation-id]');
+                if (conversationSection && conversationSection.dataset.conversationId) {
+                    conversationId = conversationSection.dataset.conversationId;
+                    console.log('Conversation ID from data attribute:', conversationId);
+                }
+            }
+            
+            // Ajouter un élément caché dans le formulaire si l'ID est trouvé
+            if (conversationId && messageForm) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'conversation_id';
+                hiddenInput.value = conversationId;
+                messageForm.appendChild(hiddenInput);
+            } else {
+                console.error('Erreur critique: ID de conversation non trouvé!');
+                // Afficher un message d'erreur visible pour l'utilisateur
+                if (chatMessagesList) {
+                    const errorHTML = `
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 flex items-center justify-center bg-red-500 rounded-full text-white flex-shrink-0">
+                                <i class="ri-error-warning-line"></i>
+                            </div>
+                            <div class="ml-3 chat-message-assistant p-4 shadow-sm max-w-[85%] bg-red-50">
+                                <p class="text-red-600">Erreur: Impossible d'identifier la conversation actuelle. Veuillez rafraîchir la page ou créer une nouvelle conversation.</p>
+                            </div>
+                        </div>`;
+                    chatMessagesList.insertAdjacentHTML('beforeend', errorHTML);
+                }
+            }
+        
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+            // Le reste du code reste inchangé...
+        
+            if (messageForm) {
+                messageForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const userMessage = messageInput.value.trim();
+        
+                    if (!userMessage) return;
+                    
+                    // Vérification stricte de l'ID de conversation
+                    if (!conversationId) {
+                        console.error('Conversation ID not found.');
+                        alert('Erreur: Impossible de trouver l\'identifiant de la conversation.');
+                        return;
+                    }
+        
+                    addUserMessageToChat(userMessage);
+                    messageInput.value = '';
+                    if (typingIndicator) {
+                        typingIndicator.classList.remove('hidden');
+                    }
+                    scrollToBottom();
+        
+                    try {
+                        // Log complet de la requête pour le débogage
+                        console.log(`Envoi du message à l'URL: /api/conversation/${conversationId}/send/`);
+                        console.log('Message:', userMessage);
+                        
+                        const response = await fetch(`/api/conversation/${conversationId}/send/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrftoken
+                            },
+                            body: JSON.stringify({ message: userMessage })
+                        });
+        
+                        if (typingIndicator) {
+                            typingIndicator.classList.add('hidden');
+                        }
+        
+                        // Log complet de la réponse
+                        console.log('Statut de la réponse:', response.status);
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log('Réponse reçue:', data);
+                            addAssistantMessageToChat(data.message);
+                        } else {
+                            let errorMessage = 'Erreur du serveur';
+                            try {
+                                const errorData = await response.json();
+                                console.error('Détails de l\'erreur:', errorData);
+                                errorMessage = `Erreur du serveur: ${errorData.error || response.statusText}`;
+                            } catch (jsonError) {
+                                console.error('Erreur lors de la lecture de la réponse JSON:', jsonError);
+                                errorMessage = `Erreur ${response.status}: ${response.statusText}`;
+                            }
+                            addAssistantMessageToChat(errorMessage);
+                        }
+                    } catch (error) {
+                        if (typingIndicator) {
+                            typingIndicator.classList.add('hidden');
+                        }
+                        console.error('Erreur réseau complète:', error);
+                        addAssistantMessageToChat('Erreur de connexion. Veuillez réessayer.');
+                    }
+                });
+            }
+    
+
+        // Mobile sidebar toggles
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const conversationSidebar = document.getElementById('conversation-sidebar');
+        const showSidebarButton = document.getElementById('show-sidebar-button');
+
+        if (mobileMenuButton && conversationSidebar) {
+            mobileMenuButton.addEventListener('click', () => {
+                conversationSidebar.classList.toggle('hidden');
+                conversationSidebar.classList.toggle('md:block');
+            });
+        }
+        if (showSidebarButton && conversationSidebar) {
+            showSidebarButton.addEventListener('click', () => {
+                conversationSidebar.classList.remove('hidden');
+                conversationSidebar.classList.add('md:block');
+            });
+        }
+        // Close sidebar if clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (conversationSidebar && !conversationSidebar.classList.contains('hidden') && !conversationSidebar.contains(event.target) && !mobileMenuButton.contains(event.target) && !showSidebarButton.contains(event.target)) {
+                if (window.innerWidth < 768) { // md breakpoint
+                    conversationSidebar.classList.add('hidden');
+                }
+            }
+        });
+
+        function scrollToBottom() {
+            if (chatMessagesContainer) {
+                chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+            }
+        }
+        scrollToBottom(); // Scroll to bottom on page load
+
+        function addUserMessageToChat(message) {
+            if (!chatMessagesList) return;
+
+            const messageHTML = `
+                <div class="flex items-start justify-end">
+                    <div class="mr-3 chat-message-user p-4 shadow-sm max-w-[85%]">
+                        <p class="text-gray-800">${message}</p>
+                    </div>
+                    <div class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 flex-shrink-0">
+                        <i class="ri-user-line"></i>
+                    </div>
+                </div>`;
+            chatMessagesList.insertAdjacentHTML('beforeend', messageHTML);
+            scrollToBottom();
+        }
+
+        function addAssistantMessageToChat(message) {
+            if (!chatMessagesList) return;
+
+            const messageHTML = `
+                <div class="flex items-start">
+                    <div class="w-8 h-8 flex items-center justify-center bg-primary rounded-full text-white flex-shrink-0">
+                        <i class="ri-robot-line"></i>
+                    </div>
+                    <div class="ml-3 chat-message-assistant p-4 shadow-sm max-w-[85%]">
+                        <p class="text-gray-800">${message.replace(/\n/g, '<br>')}</p>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <button class="text-gray-500 hover:text-primary transition-colors flex items-center copy-btn">
+                                    <div class="w-5 h-5 flex items-center justify-center">
+                                        <i class="ri-file-copy-line"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="text-gray-500 hover:text-green-500 transition-colors flex items-center">
+                                    <div class="w-6 h-6 flex items-center justify-center">
+                                        <i class="ri-thumb-up-line"></i>
+                                    </div>
+                                </button>
+                                <button class="text-gray-500 hover:text-red-500 transition-colors flex items-center">
+                                    <div class="w-6 h-6 flex items-center justify-center">
+                                        <i class="ri-thumb-down-line"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            chatMessagesList.insertAdjacentHTML('beforeend', messageHTML);
+            scrollToBottom();
+        }
+
+        if (messageForm) {
+            messageForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const userMessage = messageInput.value.trim();
+
+                if (!userMessage) return;
+                if (!conversationId) {
+                    console.error('Conversation ID not found.');
+                    alert('Erreur: Impossible de trouver l\'identifiant de la conversation.');
+                    return;
+                }
+
+                addUserMessageToChat(userMessage);
+                messageInput.value = '';
+                if (typingIndicator) {
+                    typingIndicator.classList.remove('hidden');
+                }
+                scrollToBottom();
+
+                try {
+                    const response = await fetch(`/api/conversation/${conversationId}/send/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({ message: userMessage })
+                    });
+
+                    if (typingIndicator) {
+                        typingIndicator.classList.add('hidden');
+                    }
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        addAssistantMessageToChat(data.message);
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Error sending message:', errorData);
+                        addAssistantMessageToChat(`Erreur du serveur: ${errorData.error || response.statusText}`);
+                    }
+                } catch (error) {
+                    if (typingIndicator) {
+                        typingIndicator.classList.add('hidden');
+                    }
+                    console.error('Network error:', error);
+                    addAssistantMessageToChat('Erreur de connexion. Veuillez réessayer.');
+                }
+            });
+        }
+
+        // Handle suggestion chips
+        const suggestionChipsContainer = document.getElementById('suggestion-chips-container');
+        if (suggestionChipsContainer) {
+            suggestionChipsContainer.addEventListener('click', function(event) {
+                if (event.target.classList.contains('suggestion-chip')) {
+                    const suggestionText = event.target.textContent.trim();
+                    messageInput.value = suggestionText;
+                    messageForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+            });
+        }
+
+        
+        // Handle new conversation button
+        const newConversationBtn = document.getElementById('new-conversation-btn');
+        if (newConversationBtn) {
+            newConversationBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`/api/conversation/create/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({ title: 'Nouvelle Conversation' })
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Utiliser l'URL de redirection renvoyée par l'API si elle existe
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        } else {
+                            window.location.href = `/chat/conversation/${data.id}/`;
+                        }
+                    } else {
+                        console.error('Failed to create new conversation');
+                        alert('Erreur lors de la création d\'une nouvelle conversation.');
+                    }
+                } catch (error) {
+                    console.error('Error creating new conversation:', error);
+                    alert('Erreur réseau lors de la création d\'une nouvelle conversation.');
+                }
+            });
+        }
+
+        // Copy button functionality
+        if (chatMessagesList) {
+            chatMessagesList.addEventListener('click', function(event) {
+                const copyButton = event.target.closest('.copy-btn');
+                if (copyButton) {
+                    const messageContentElement = copyButton.closest('.chat-message-assistant').querySelector('p');
+                    if (messageContentElement) {
+                        const textToCopy = messageContentElement.innerText || messageContentElement.textContent;
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            // Changer l'icône temporairement pour indiquer le succès
+                            const icon = copyButton.querySelector('i');
+                            if (icon) {
+                                const originalIconClass = icon.className;
+                                icon.className = 'ri-check-line';
+                                setTimeout(() => {
+                                    icon.className = originalIconClass;
+                                }, 1500);
+                            }
+                        }).catch(err => {
+                            console.error('Failed to copy text: ', err);
+                        });
+                    }
+                }
+            });
+    }
+});
+    </script>
+</body>
+</html>
+

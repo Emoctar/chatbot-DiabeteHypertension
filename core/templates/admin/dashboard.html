@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Santé Diabète & Hypertension</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #1A5F7A;
+            --secondary: #4ECDC4;
+            --accent: #FF9F1C;
+            --white: #FFFFFF;
+            --light-gray: #F5F6FA;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 0.75rem;
+        }
+
+        .sidebar-logo h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--white);
+            margin: 0;
+        }
+
+        .menu {
+            list-style-type: none;
+            padding: 0 1rem;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-gray);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+        }
+
+        .search-bar i {
+            color: var(--text-light);
+            margin-right: 0.5rem;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-btn, .profile-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            color: var(--text-dark);
+            margin-left: 1rem;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--accent);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .profile-btn img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .widget:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .widget-title {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .widget-action {
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-card.primary {
+            border-top: 3px solid var(--primary);
+        }
+
+        .stat-card.secondary {
+            border-top: 3px solid var(--secondary);
+        }
+
+        .stat-card.accent {
+            border-top: 3px solid var(--accent);
+        }
+
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            border-radius: 50%;
+        }
+
+        .stat-icon.primary {
+            background-color: rgba(26, 95, 122, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.secondary {
+            background-color: rgba(78, 205, 196, 0.1);
+            color: var(--secondary);
+        }
+
+        .stat-icon.accent {
+            background-color: rgba(255, 159, 28, 0.1);
+            color: var(--accent);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .chart-container {
+            position: relative;
+            min-height: 250px;
+        }
+
+        .recent-questions {
+            margin-top: 1rem;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .question-item:last-child {
+            border-bottom: none;
+        }
+
+        .question-category {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+        }
+
+        .question-category.diabetes {
+            background-color: var(--primary);
+        }
+
+        .question-category.hypertension {
+            background-color: var(--secondary);
+        }
+
+        .question-category.general {
+            background-color: var(--accent);
+        }
+
+        .question-text {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .question-meta {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .status.answered {
+            background-color: rgba(78, 205, 196, 0.1);
+            color: var(--secondary);
+        }
+
+        .status.pending {
+            background-color: rgba(255, 159, 28, 0.1);
+            color: var(--accent);
+        }
+
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .resource-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-image {
+            height: 130px;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resource-image i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .resource-details {
+            padding: 1rem;
+            background-color: var(--white);
+        }
+
+        .resource-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .resource-views {
+            display: flex;
+            align-items: center;
+        }
+
+        .resource-views i {
+            margin-right: 0.25rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            flex: 1;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .action-btn.secondary {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+
+        .action-btn.accent {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        .col-span-3 {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 1200px) {
+            .col-span-2, .col-span-3 {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem 0;
+            }
+
+            .sidebar-logo {
+                padding: 0 1rem 1rem;
+            }
+
+            .sidebar-logo h2, .menu-link span {
+                display: none;
+            }
+
+            .sidebar-logo img {
+                margin-right: 0;
+            }
+
+            .menu-link {
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            .menu-link i {
+                margin-right: 0;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-bar {
+                width: 100%;
+                max-width: none;
+                margin-bottom: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .resource-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 250px;
+                height: 100%;
+                z-index: 1000;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: var(--primary);
+                color: var(--white);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: var(--shadow);
+            }
+
+            .header {
+                margin-top: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-heartbeat" style="font-size: 1.75rem;"></i>
+            <h2>MediChat</h2>
+        </div>
+        <ul class="menu">
+            <li class="menu-item">
+                <a href="#" class="menu-link active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Conversations</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Statistiques</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-book-medical"></i>
+                    <span>Ressources</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Rechercher...">
+            </div>
+            <div class="user-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </button>
+                <button class="profile-btn">
+                    <img src="/api/placeholder/50/50" alt="Profile">
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-grid">
+            <!-- Stats Cards -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Statistiques Rapides</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-value">1,258</div>
+                        <div class="stat-label">Conversations</div>
+                    </div>
+                    <div class="stat-card secondary">
+                        <div class="stat-icon secondary">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="stat-value">452</div>
+                        <div class="stat-label">Questions fréquentes</div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-icon accent">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="stat-value">94%</div>
+                        <div class="stat-label">Taux de satisfaction</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Chart -->
+            <div class="widget col-span-2">
+                <div class="widget-header">
+                    <h3 class="widget-title">Activité du Chatbot</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Questions -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Questions Récentes</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <div class="recent-questions">
+                    <div class="question-item">
+                        <div class="question-category diabetes"></div>
+                        <div class="question-text">Comment contrôler ma glycémie ?</div>
+                        <span class="status answered">Répondu</span>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-category hypertension"></div>
+                        <div class="question-text">Alimentation pour l'hypertension</div>
+                        <span class="status answered">Répondu</span>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-category general"></div>
+                        <div class="question-text">Exercices recommandés</div>
+                        <span class="status pending">En attente</span>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-category diabetes"></div>
+                        <div class="question-text">Symptômes d'hypoglycémie</div>
+                        <span class="status answered">Répondu</span>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-category hypertension"></div>
+                        <div class="question-text">Médicaments contre l'hypertension</div>
+                        <span class="status pending">En attente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Resources -->
+            <div class="widget col-span-2">
+                <div class="widget-header">
+                    <h3 class="widget-title">Ressources Populaires</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <div class="resource-list">
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="resource-details">
+                            <h4 class="resource-title">Guide de l'alimentation pour diabétiques</h4>
+                            <div class="resource-meta">
+                                <span class="resource-type">PDF</span>
+                                <span class="resource-views">
+                                    <i class="fas fa-eye"></i> 1.2k
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="resource-details">
+                            <h4 class="resource-title">Vidéo : Mesurer sa tension artérielle</h4>
+                            <div class="resource-meta">
+                                <span class="resource-type">Vidéo</span>
+                                <span class="resource-views">
+                                    <i class="fas fa-eye"></i> 876
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="resource-card">
+                        <div class="resource-image">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="resource-details">
+                            <h4 class="resource-title">Checklist quotidienne</h4>
+                            <div class="resource-meta">
+                                <span class="resource-type">PDF</span>
+                                <span class="resource-views">
+                                    <i class="fas fa-eye"></i> 643
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="action-btn primary">
+                <i class="fas fa-plus"></i>
+                Nouvelle Conversation
+            </button>
+            <button class="action-btn secondary">
+                <i class="fas fa-book-open"></i>
+                Explorer les Ressources
+            </button>
+            <button class="action-btn accent">
+                <i class="fas fa-chart-bar"></i>
+                Voir les Statistiques
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Activity Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+            gradient.addColorStop(0, 'rgba(78, 205, 196, 0.5)');
+            gradient.addColorStop(1, 'rgba(78, 205, 196, 0.0)');
+
+            const activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                    datasets: [{
+                        label: 'Interactions',
+                        data: [65, 78, 52, 91, 43, 29, 47],
+                        backgroundColor: gradient,
+                        borderColor: '#4ECDC4',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#4ECDC4',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1A5F7A',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF',
+                            titleFontSize: 14,
+                            bodyFontSize: 12,
+                            displayColors: false,
+                            caretPadding: 5,
+                            cornerRadius: 4
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#777777'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#777777'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // For mobile toggle menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create menu toggle button for mobile
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(menuToggle);
+
+            menuToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+
+                if (sidebar.classList.contains('active')) {
+                    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+
+            // Hide sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.querySelector('.sidebar');
+                const menuToggle = document.querySelector('.menu-toggle');
+
+                if (sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
+                    !menuToggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

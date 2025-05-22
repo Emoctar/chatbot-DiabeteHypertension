@@ -1,0 +1,41 @@
+<!-- templates/partials/header.html -->
+ <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+
+                <span class="text-primary font-['Pacifico'] text-2xl">SantéChat</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="{% url 'core:index' %}" class="font-poppins text-gray-800 hover:text-primary font-medium">Accueil</a>
+                <a href="{% url 'core:apropos' %}" class="font-poppins text-gray-800 hover:text-primary font-medium">À propos</a>
+                <a href="{% url 'core:contact' %}" class="font-poppins text-gray-800 hover:text-primary font-medium">Contact</a>
+                <div class="relative group inline-block">
+                    <button class="font-poppins text-gray-800 hover:text-primary font-medium">
+                        Ressources
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded mt-2 w-48 z-50">
+                        <a href="{% url 'core:ressources' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Documentation</a>
+                        <a href="{% url 'quiz:quiz' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Quiz
+                            santé</a>
+                        <a href="{% url 'quiz:autoevaluation' %}"
+                           class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Évaluation</a>
+                    </div>
+                </div>
+
+
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'accounts:login' %}" class="font-poppins text-primary hover:text-primary/80 font-medium">
+                    Se connecter
+                </a>
+                <a href="{% url 'accounts:register' %}" class="font-poppins bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-colors">
+                    S'inscrire
+                </a>
+                <button class="md:hidden w-10 h-10 flex items-center justify-center">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>

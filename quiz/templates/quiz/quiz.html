@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Santé - SantéChat</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#E5E7EB'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(26, 95, 122, 0.15);
+        }
+        input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1A5F7A;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+        }
+        input[type="radio"]:checked::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background-color: #1A5F7A;
+            border-radius: 50%;
+        }
+        .quiz-progress {
+            height: 8px;
+            background-color: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .quiz-progress-bar {
+            height: 100%;
+            background-color: #1A5F7A;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    {% include 'partials/header.html' %}
+
+    <main class="pt-28 pb-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <section class="text-center mb-16">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Quiz Santé</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Testez vos connaissances sur différents sujets de santé et apprenez tout en vous amusant. Choisissez votre thème préféré et commencez dès maintenant !</p>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Carte Diabète -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+                    <div class="h-40 bg-primary/10 flex items-center justify-center">
+                        <div class="w-24 h-24 flex items-center justify-center text-primary">
+                            <i class="ri-heart-pulse-line ri-4x"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Quiz sur le Diabète</h3>
+                        <p class="text-gray-600 mb-6">Découvrez les causes, symptômes et traitements du diabète à travers ce quiz interactif.</p>
+                        <button class="open-modal w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-modal="diabete">
+                            Commencer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carte Hypertension -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+                    <div class="h-40 bg-primary/10 flex items-center justify-center">
+                        <div class="w-24 h-24 flex items-center justify-center text-primary">
+                            <i class="ri-pulse-line ri-4x"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Quiz sur l'Hypertension</h3>
+                        <p class="text-gray-600 mb-6">Testez vos connaissances sur l'hypertension artérielle, ses facteurs de risque et sa gestion.</p>
+                        <button class="open-modal w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-modal="hypertension">
+                            Commencer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Carte Thème Général -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+                    <div class="h-40 bg-primary/10 flex items-center justify-center">
+                        <div class="w-24 h-24 flex items-center justify-center text-primary">
+                            <i class="ri-mental-health-line ri-4x"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Quiz Général sur la Santé</h3>
+                        <p class="text-gray-600 mb-6">Un quiz complet couvrant divers aspects de la santé, incluant le diabète, l'hypertension et plus encore.</p>
+                        <button class="open-modal w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-modal="general">
+                            Commencer
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-primary/5 rounded-xl p-8 mb-16">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="w-full md:w-1/2">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Pourquoi faire nos quiz ?</h2>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mt-1 mr-3">
+                                    <i class="ri-check-line ri-lg"></i>
+                                </div>
+                                <p class="text-gray-700">Apprenez des informations essentielles sur la santé de manière ludique</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mt-1 mr-3">
+                                    <i class="ri-check-line ri-lg"></i>
+                                </div>
+                                <p class="text-gray-700">Évaluez vos connaissances et identifiez les domaines à améliorer</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mt-1 mr-3">
+                                    <i class="ri-check-line ri-lg"></i>
+                                </div>
+                                <p class="text-gray-700">Recevez des explications détaillées pour chaque réponse</p>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-6 h-6 flex items-center justify-center text-primary mt-1 mr-3">
+                                    <i class="ri-check-line ri-lg"></i>
+                                </div>
+                                <p class="text-gray-700">Partagez vos résultats et défier vos amis</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="w-full md:w-1/2 flex justify-center">
+                        <div class="w-72 h-72 flex items-center justify-center text-primary">
+                            <i class="ri-questionnaire-line ri-10x"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Nos Statistiques</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-primary">
+                            <i class="ri-user-line ri-3x"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold text-primary mb-2">5,000+</h3>
+                        <p class="text-gray-600">Utilisateurs actifs</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-primary">
+                            <i class="ri-question-answer-line ri-3x"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold text-primary mb-2">10,000+</h3>
+                        <p class="text-gray-600">Quiz complétés</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center text-primary">
+                            <i class="ri-medal-line ri-3x"></i>
+                        </div>
+                        <h3 class="text-4xl font-bold text-primary mb-2">85%</h3>
+                        <p class="text-gray-600">Taux de satisfaction</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <!-- Modal Diabète -->
+    <div id="modal-diabete" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" id="modal-overlay-diabete"></div>
+        <div class="relative bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto">
+            <div class="sticky top-0 bg-white p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-900">Quiz sur le Diabète</h2>
+                <button class="close-modal w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-700" data-modal="diabete">
+                    <i class="ri-close-line ri-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 quiz-container" id="quiz-diabete-intro">
+                <p class="text-gray-700 mb-6">Ce quiz vous permettra de tester vos connaissances sur le diabète, ses causes, ses symptômes et ses traitements. Il comprend 10 questions à choix multiples.</p>
+                
+                <div class="bg-primary/5 p-4 rounded-lg mb-6">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 flex items-center justify-center text-primary mr-4">
+                            <i class="ri-information-line ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Avant de commencer</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Vous avez 15 minutes pour compléter le quiz</li>
+                                <li>• Chaque question a une seule réponse correcte</li>
+                                <li>• Vous recevrez votre score à la fin du quiz</li>
+                                <li>• Vous pourrez revoir les réponses correctes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="start-quiz w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-quiz="diabete">
+                    Commencer le Quiz
+                </button>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-diabete-questions">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Question <span id="diabete-current-question">1</span>/10</span>
+                        <span class="text-sm font-medium text-gray-700">Temps restant: <span id="diabete-timer">15:00</span></span>
+                    </div>
+                    <div class="quiz-progress">
+                        <div class="quiz-progress-bar" id="diabete-progress" style="width: 10%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4" id="diabete-question">Quel est le principal hormone impliquée dans la régulation du sucre sanguin ?</h3>
+                    
+                    <div class="space-y-3" id="diabete-options">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="diabete-q1" value="a">
+                            <span>L'insuline</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="diabete-q1" value="b">
+                            <span>Le glucagon</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="diabete-q1" value="c">
+                            <span>La cortisone</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="diabete-q1" value="d">
+                            <span>L'adrénaline</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 !rounded-button hover:bg-gray-300 transition-colors font-medium" id="diabete-prev" disabled>
+                        Précédent
+                    </button>
+                    <button class="bg-primary text-white px-6 py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="diabete-next">
+                        Suivant
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-diabete-results">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center text-primary">
+                        <i class="ri-medal-line ri-4x"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Quiz Terminé !</h3>
+                    <p class="text-gray-700">Votre score: <span class="font-bold text-primary" id="diabete-score">8/10</span></p>
+                </div>
+                
+                <div class="bg-primary/5 p-6 rounded-lg mb-8">
+                    <h4 class="font-semibold text-gray-900 mb-4">Résumé de vos réponses</h4>
+                    <div class="space-y-4" id="diabete-summary">
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-green-500 mt-1 mr-3">
+                                <i class="ri-check-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 1: Quel est le principal hormone impliquée dans la régulation du sucre sanguin ?</p>
+                                <p class="text-green-600">Réponse correcte: L'insuline</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-red-500 mt-1 mr-3">
+                                <i class="ri-close-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 2: Quel organe produit l'insuline ?</p>
+                                <p class="text-red-600">Votre réponse: Le foie</p>
+                                <p class="text-green-600">Réponse correcte: Le pancréas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="bg-primary text-white py-3 flex-1 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="diabete-restart">
+                        Recommencer le Quiz
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 py-3 flex-1 !rounded-button hover:bg-gray-300 transition-colors font-medium close-modal" data-modal="diabete">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hypertension -->
+    <div id="modal-hypertension" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" id="modal-overlay-hypertension"></div>
+        <div class="relative bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto">
+            <div class="sticky top-0 bg-white p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-900">Quiz sur l'Hypertension</h2>
+                <button class="close-modal w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-700" data-modal="hypertension">
+                    <i class="ri-close-line ri-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 quiz-container" id="quiz-hypertension-intro">
+                <p class="text-gray-700 mb-6">Ce quiz vous permettra de tester vos connaissances sur l'hypertension artérielle, ses facteurs de risque, ses complications et ses traitements. Il comprend 10 questions à choix multiples.</p>
+                
+                <div class="bg-primary/5 p-4 rounded-lg mb-6">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 flex items-center justify-center text-primary mr-4">
+                            <i class="ri-information-line ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Avant de commencer</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Vous avez 15 minutes pour compléter le quiz</li>
+                                <li>• Chaque question a une seule réponse correcte</li>
+                                <li>• Vous recevrez votre score à la fin du quiz</li>
+                                <li>• Vous pourrez revoir les réponses correctes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="start-quiz w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-quiz="hypertension">
+                    Commencer le Quiz
+                </button>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-hypertension-questions">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Question <span id="hypertension-current-question">1</span>/10</span>
+                        <span class="text-sm font-medium text-gray-700">Temps restant: <span id="hypertension-timer">15:00</span></span>
+                    </div>
+                    <div class="quiz-progress">
+                        <div class="quiz-progress-bar" id="hypertension-progress" style="width: 10%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4" id="hypertension-question">À partir de quelle valeur considère-t-on qu'une personne souffre d'hypertension artérielle ?</h3>
+                    
+                    <div class="space-y-3" id="hypertension-options">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="hypertension-q1" value="a">
+                            <span>120/80 mmHg</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="hypertension-q1" value="b">
+                            <span>130/85 mmHg</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="hypertension-q1" value="c">
+                            <span>140/90 mmHg</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="hypertension-q1" value="d">
+                            <span>150/95 mmHg</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 !rounded-button hover:bg-gray-300 transition-colors font-medium" id="hypertension-prev" disabled>
+                        Précédent
+                    </button>
+                    <button class="bg-primary text-white px-6 py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="hypertension-next">
+                        Suivant
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-hypertension-results">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center text-primary">
+                        <i class="ri-medal-line ri-4x"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Quiz Terminé !</h3>
+                    <p class="text-gray-700">Votre score: <span class="font-bold text-primary" id="hypertension-score">7/10</span></p>
+                </div>
+                
+                <div class="bg-primary/5 p-6 rounded-lg mb-8">
+                    <h4 class="font-semibold text-gray-900 mb-4">Résumé de vos réponses</h4>
+                    <div class="space-y-4" id="hypertension-summary">
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-green-500 mt-1 mr-3">
+                                <i class="ri-check-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 1: À partir de quelle valeur considère-t-on qu'une personne souffre d'hypertension artérielle ?</p>
+                                <p class="text-green-600">Réponse correcte: 140/90 mmHg</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-red-500 mt-1 mr-3">
+                                <i class="ri-close-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 2: Quel facteur n'est pas associé à l'hypertension ?</p>
+                                <p class="text-red-600">Votre réponse: Le stress</p>
+                                <p class="text-green-600">Réponse correcte: La pratique régulière d'activité physique</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="bg-primary text-white py-3 flex-1 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="hypertension-restart">
+                        Recommencer le Quiz
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 py-3 flex-1 !rounded-button hover:bg-gray-300 transition-colors font-medium close-modal" data-modal="hypertension">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thème Général -->
+    <div id="modal-general" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" id="modal-overlay-general"></div>
+        <div class="relative bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto">
+            <div class="sticky top-0 bg-white p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-900">Quiz Général sur la Santé</h2>
+                <button class="close-modal w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-700" data-modal="general">
+                    <i class="ri-close-line ri-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 quiz-container" id="quiz-general-intro">
+                <p class="text-gray-700 mb-6">Ce quiz général vous permettra de tester vos connaissances sur divers aspects de la santé, incluant le diabète, l'hypertension et d'autres sujets importants. Il comprend 15 questions à choix multiples.</p>
+                
+                <div class="bg-primary/5 p-4 rounded-lg mb-6">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 flex items-center justify-center text-primary mr-4">
+                            <i class="ri-information-line ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Avant de commencer</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>• Vous avez 20 minutes pour compléter le quiz</li>
+                                <li>• Chaque question a une seule réponse correcte</li>
+                                <li>• Vous recevrez votre score à la fin du quiz</li>
+                                <li>• Vous pourrez revoir les réponses correctes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="start-quiz w-full bg-primary text-white py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" data-quiz="general">
+                    Commencer le Quiz
+                </button>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-general-questions">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Question <span id="general-current-question">1</span>/15</span>
+                        <span class="text-sm font-medium text-gray-700">Temps restant: <span id="general-timer">20:00</span></span>
+                    </div>
+                    <div class="quiz-progress">
+                        <div class="quiz-progress-bar" id="general-progress" style="width: 6.67%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4" id="general-question">Quelle est la plage normale de glycémie à jeun ?</h3>
+                    
+                    <div class="space-y-3" id="general-options">
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="general-q1" value="a">
+                            <span>70-100 mg/dL</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="general-q1" value="b">
+                            <span>100-140 mg/dL</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="general-q1" value="c">
+                            <span>140-180 mg/dL</span>
+                        </label>
+                        <label class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-primary/5 cursor-pointer">
+                            <input type="radio" name="general-q1" value="d">
+                            <span>180-220 mg/dL</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 !rounded-button hover:bg-gray-300 transition-colors font-medium" id="general-prev" disabled>
+                        Précédent
+                    </button>
+                    <button class="bg-primary text-white px-6 py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="general-next">
+                        Suivant
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6 hidden" id="quiz-general-results">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center text-primary">
+                        <i class="ri-medal-line ri-4x"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Quiz Terminé !</h3>
+                    <p class="text-gray-700">Votre score: <span class="font-bold text-primary" id="general-score">12/15</span></p>
+                </div>
+                
+                <div class="bg-primary/5 p-6 rounded-lg mb-8">
+                    <h4 class="font-semibold text-gray-900 mb-4">Résumé de vos réponses</h4>
+                    <div class="space-y-4" id="general-summary">
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-green-500 mt-1 mr-3">
+                                <i class="ri-check-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 1: Quelle est la plage normale de glycémie à jeun ?</p>
+                                <p class="text-green-600">Réponse correcte: 70-100 mg/dL</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-6 h-6 flex items-center justify-center text-red-500 mt-1 mr-3">
+                                <i class="ri-close-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">Question 2: Quel est l'organe principal du système immunitaire ?</p>
+                                <p class="text-red-600">Votre réponse: Le foie</p>
+                                <p class="text-green-600">Réponse correcte: La moelle osseuse</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="bg-primary text-white py-3 flex-1 !rounded-button hover:bg-primary/90 transition-colors font-medium" id="general-restart">
+                        Recommencer le Quiz
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 py-3 flex-1 !rounded-button hover:bg-gray-300 transition-colors font-medium close-modal" data-modal="general">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des modales
+            const openModalButtons = document.querySelectorAll('.open-modal');
+            const closeModalButtons = document.querySelectorAll('.close-modal');
+            const modalOverlays = document.querySelectorAll('[id^="modal-overlay-"]');
+            
+            openModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const modalId = this.getAttribute('data-modal');
+                    const modal = document.getElementById(`modal-${modalId}`);
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            const closeModal = (modalId) => {
+                const modal = document.getElementById(`modal-${modalId}`);
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const modalId = this.getAttribute('data-modal');
+                    closeModal(modalId);
+                });
+            });
+            
+            modalOverlays.forEach(overlay => {
+                overlay.addEventListener('click', function() {
+                    const modalId = this.id.replace('modal-overlay-', '');
+                    closeModal(modalId);
+                });
+            });
+            
+            // Gestion des quiz
+            const startQuizButtons = document.querySelectorAll('.start-quiz');
+            
+            startQuizButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const quizId = this.getAttribute('data-quiz');
+                    document.getElementById(`quiz-${quizId}-intro`).classList.add('hidden');
+                    document.getElementById(`quiz-${quizId}-questions`).classList.remove('hidden');
+                    
+                    // Initialiser le timer
+                    let timeLeft = quizId === 'general' ? 20 * 60 : 15 * 60; // en secondes
+                    const timerElement = document.getElementById(`${quizId}-timer`);
+                    
+                    const timerInterval = setInterval(() => {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            showResults(quizId);
+                        }
+                        
+                        timeLeft--;
+                    }, 1000);
+                    
+                    // Stocker l'intervalle pour pouvoir l'arrêter plus tard
+                    window[`${quizId}TimerInterval`] = timerInterval;
+                });
+            });
+            
+            // Gestion des boutons suivant/précédent
+            const quizTypes = ['diabete', 'hypertension', 'general'];
+            
+            quizTypes.forEach(type => {
+                const nextButton = document.getElementById(`${type}-next`);
+                const prevButton = document.getElementById(`${type}-prev`);
+                const restartButton = document.getElementById(`${type}-restart`);
+                
+                let currentQuestion = 1;
+                const totalQuestions = type === 'general' ? 15 : 10;
+                
+                nextButton.addEventListener('click', function() {
+                    if (currentQuestion < totalQuestions) {
+                        currentQuestion++;
+                        updateQuestionDisplay(type, currentQuestion, totalQuestions);
+                    } else {
+                        showResults(type);
+                    }
+                });
+                
+                prevButton.addEventListener('click', function() {
+                    if (currentQuestion > 1) {
+                        currentQuestion--;
+                        updateQuestionDisplay(type, currentQuestion, totalQuestions);
+                    }
+                });
+                
+                restartButton.addEventListener('click', function() {
+                    document.getElementById(`quiz-${type}-results`).classList.add('hidden');
+                    document.getElementById(`quiz-${type}-intro`).classList.remove('hidden');
+                });
+            });
+            
+            function updateQuestionDisplay(type, currentQ, totalQ) {
+                document.getElementById(`${type}-current-question`).textContent = currentQ;
+                document.getElementById(`${type}-progress`).style.width = `${(currentQ / totalQ) * 100}%`;
+                
+                const prevButton = document.getElementById(`${type}-prev`);
+                const nextButton = document.getElementById(`${type}-next`);
+                
+                prevButton.disabled = currentQ === 1;
+                nextButton.textContent = currentQ === totalQ ? 'Terminer' : 'Suivant';
+                
+                // Ici, vous pourriez charger la question suivante depuis une base de données
+                // Pour cet exemple, nous simulons juste le changement de question
+                if (type === 'diabete') {
+                    const questions = [
+                        "Quel est le principal hormone impliquée dans la régulation du sucre sanguin ?",
+                        "Quel organe produit l'insuline ?",
+                        "Quel est le taux normal de glycémie à jeun ?",
+                        "Quel type de diabète est généralement diagnostiqué chez les enfants ?",
+                        "Quelle complication n'est pas associée au diabète ?",
+                        "Quel est le nom du test utilisé pour diagnostiquer le diabète ?",
+                        "Quelle hormone augmente la glycémie ?",
+                        "Quel symptôme n'est pas typique du diabète ?",
+                        "Quel facteur n'augmente pas le risque de diabète de type 2 ?",
+                        "Quelle est la principale cause du diabète de type 1 ?"
+                    ];
+                    document.getElementById(`${type}-question`).textContent = questions[currentQ - 1];
+                } else if (type === 'hypertension') {
+                    const questions = [
+                        "À partir de quelle valeur considère-t-on qu'une personne souffre d'hypertension artérielle ?",
+                        "Quel facteur n'est pas associé à l'hypertension ?",
+                        "Quelle complication peut être causée par l'hypertension non traitée ?",
+                        "Quelle classe de médicaments n'est pas utilisée pour traiter l'hypertension ?",
+                        "Quel organe est le plus affecté par l'hypertension ?",
+                        "Quelle mesure diététique aide à réduire l'hypertension ?",
+                        "Quelle est la principale cause de l'hypertension secondaire ?",
+                        "Quel est le nom de l'appareil utilisé pour mesurer la tension artérielle ?",
+                        "Quelle est la tension artérielle idéale ?",
+                        "Quel symptôme est le plus souvent associé à l'hypertension ?"
+                    ];
+                    document.getElementById(`${type}-question`).textContent = questions[currentQ - 1];
+                } else if (type === 'general') {
+                    const questions = [
+                        "Quelle est la plage normale de glycémie à jeun ?",
+                        "Quel est l'organe principal du système immunitaire ?",
+                        "Combien d'heures de sommeil sont recommandées pour un adulte ?",
+                        "Quel nutriment est principalement responsable de la construction musculaire ?",
+                        "Quelle vitamine est produite par la peau exposée au soleil ?",
+                        "Quel est le rythme cardiaque normal au repos pour un adulte ?",
+                        "Quelle est la fonction principale des globules rouges ?",
+                        "Quel est le principal facteur de risque modifiable pour les maladies cardiovasculaires ?",
+                        "Quelle est la température corporelle normale en degrés Celsius ?",
+                        "Quel organe est responsable de la détoxification du sang ?",
+                        "Quelle hormone est connue comme l'hormone du stress ?",
+                        "Combien de litres d'eau un adulte devrait-il boire quotidiennement ?",
+                        "Quel minéral est essentiel pour la santé des os ?",
+                        "Quel est le principal symptôme d'une crise cardiaque ?",
+                        "Quelle est la fonction principale du système lymphatique ?"
+                    ];
+                    document.getElementById(`${type}-question`).textContent = questions[currentQ - 1];
+                }
+                
+                // Réinitialiser les options (dans un vrai quiz, vous chargeriez les options correspondantes)
+                const optionsContainer = document.getElementById(`${type}-options`);
+                const radioName = `${type}-q${currentQ}`;
+                
+                // Supprimer l'attribut name des boutons radio précédents pour éviter les conflits
+                const previousRadios = document.querySelectorAll(`input[name^="${type}-q"]`);
+                previousRadios.forEach(radio => {
+                    radio.checked = false;
+                });
+                
+                // Mettre à jour le nom des boutons radio
+                const radios = optionsContainer.querySelectorAll('input[type="radio"]');
+                radios.forEach(radio => {
+                    radio.name = radioName;
+                });
+            }
+            
+            function showResults(type) {
+                // Arrêter le timer
+                clearInterval(window[`${type}TimerInterval`]);
+                
+                // Afficher les résultats
+                document.getElementById(`quiz-${type}-questions`).classList.add('hidden');
+                document.getElementById(`quiz-${type}-results`).classList.remove('hidden');
+                
+                // Dans un vrai quiz, vous calculeriez le score réel ici
+                // Pour cet exemple, nous affichons un score fictif
+                const totalQuestions = type === 'general' ? 15 : 10;
+                const score = Math.floor(Math.random() * (totalQuestions + 1));
+                document.getElementById(`${type}-score`).textContent = `${score}/${totalQuestions}`;
+                
+                // Générer un résumé fictif
+                const summaryContainer = document.getElementById(`${type}-summary`);
+                summaryContainer.innerHTML = '';
+                
+                for (let i = 1; i <= Math.min(5, totalQuestions); i++) {
+                    const isCorrect = Math.random() > 0.3;
+                    const questionText = document.getElementById(`${type}-question`).textContent;
+                    
+                    const summaryItem = document.createElement('div');
+                    summaryItem.className = 'flex items-start';
+                    
+                    summaryItem.innerHTML = `
+                        <div class="w-6 h-6 flex items-center justify-center text-${isCorrect ? 'green' : 'red'}-500 mt-1 mr-3">
+                            <i class="ri-${isCorrect ? 'check' : 'close'}-line"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Question ${i}: ${questionText}</p>
+                            ${!isCorrect ? `<p class="text-red-600">Votre réponse: Option incorrecte</p>` : ''}
+                            <p class="text-green-600">Réponse correcte: Option correcte</p>
+                        </div>
+                    `;
+                    
+                    summaryContainer.appendChild(summaryItem);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

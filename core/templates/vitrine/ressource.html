@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources - Informations sur le diabète et l'hypertension</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#4ECDC4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1f2937;
+        }
+        .search-input:focus {
+            outline: none;
+        }
+        .custom-checkbox {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        .custom-checkbox:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 0.3rem;
+            top: 0.1rem;
+            width: 0.4rem;
+            height: 0.7rem;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    {% include 'partials/header.html' %}
+
+    <main class="container mx-auto px-4 py-8">
+        <section class="mb-12">
+            <div class="max-w-4xl mx-auto text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">Ressources sur le diabète et l'hypertension</h1>
+                <p class="text-gray-600 text-lg mb-8">Découvrez notre collection d'articles, de guides et de sources officielles pour mieux comprendre et gérer ces conditions.</p>
+
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="ri-search-line text-gray-400 ri-lg"></i>
+                    </div>
+                    <input type="text" class="search-input w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700" placeholder="Rechercher des ressources...">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-4 mb-10">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap gap-3">
+                        <button class="bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap">
+                            Tout
+                        </button>
+                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
+                            Articles
+                        </button>
+                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
+                            Sources officielles
+                        </button>
+                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
+                            Documents
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="diabete" class="custom-checkbox">
+                            <label for="diabete" class="text-gray-700 cursor-pointer">Diabète</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="hypertension" class="custom-checkbox">
+                            <label for="hypertension" class="text-gray-700 cursor-pointer">Hypertension</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-6">Articles de fond</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
+                    <img src="https://readdy.ai/api/search-image?query=Medical%20professional%20explaining%20diabetes%20to%20patient%2C%20medical%20office%20setting%2C%20educational%20materials%20on%20desk%2C%20warm%20lighting%2C%20professional%20environment%2C%20detailed%20medical%20charts%20visible&width=600&height=400&seq=1&orientation=landscape" alt="Comprendre le diabète" class="w-full h-48 object-cover object-top">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Diabète</span>
+                            <span class="text-gray-500 text-sm ml-auto">12 min de lecture</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Comprendre le diabète de type 2 : causes, symptômes et traitements</h3>
+                        <p class="text-gray-600 mb-4">Un guide complet pour comprendre les mécanismes du diabète de type 2, reconnaître ses symptômes et explorer les options de traitement disponibles.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">Publié le 28 avril 2025</span>
+                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                                Lire plus
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
+                    <img src="https://readdy.ai/api/search-image?query=Doctor%20measuring%20blood%20pressure%20of%20elderly%20patient%2C%20medical%20office%20with%20blood%20pressure%20chart%20on%20wall%2C%20natural%20lighting%2C%20professional%20healthcare%20setting%2C%20detailed%20medical%20equipment&width=600&height=400&seq=2&orientation=landscape" alt="Hypertension artérielle" class="w-full h-48 object-cover object-top">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Hypertension</span>
+                            <span class="text-gray-500 text-sm ml-auto">9 min de lecture</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">L'hypertension artérielle : facteurs de risque et prévention</h3>
+                        <p class="text-gray-600 mb-4">Découvrez les facteurs qui contribuent à l'hypertension et les stratégies efficaces pour maintenir une tension artérielle saine au quotidien.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">Publié le 15 avril 2025</span>
+                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                                Lire plus
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
+                    <img src="https://readdy.ai/api/search-image?query=Person%20preparing%20healthy%20meal%20with%20vegetables%2C%20whole%20grains%2C%20and%20lean%20protein%2C%20bright%20kitchen%20setting%2C%20nutrition%20guide%20visible%2C%20natural%20lighting%2C%20detailed%20food%20preparation&width=600&height=400&seq=3&orientation=landscape" alt="Alimentation équilibrée" class="w-full h-48 object-cover object-top">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Diabète</span>
+                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full ml-2">Hypertension</span>
+                            <span class="text-gray-500 text-sm ml-auto">15 min de lecture</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Alimentation équilibrée pour contrôler le diabète et l'hypertension</h3>
+                        <p class="text-gray-600 mb-4">Un guide nutritionnel complet pour aider à gérer simultanément le diabète et l'hypertension grâce à des choix alimentaires adaptés.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">Publié le 5 mai 2025</span>
+                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                                Lire plus
+                                <i class="ri-arrow-right-line ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="text-center mt-8">
+                <button class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 !rounded-button font-medium hover:bg-gray-50 whitespace-nowrap">
+                    Voir plus d'articles
+                </button>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-6">Sources officielles</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 flex items-start transition-all duration-300">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 flex-shrink-0">
+                        <i class="ri-hospital-fill text-primary ri-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Organisation Mondiale de la Santé</h3>
+                        <p class="text-gray-600 mb-3">Informations et directives officielles sur le diabète et l'hypertension à l'échelle mondiale.</p>
+                        <a href="#" class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                            Visiter le site
+                            <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 flex items-start transition-all duration-300">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 flex-shrink-0">
+                        <i class="ri-government-fill text-primary ri-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Ministère de la Santé</h3>
+                        <p class="text-gray-600 mb-3">Ressources nationales et programmes de santé publique concernant le diabète et l'hypertension.</p>
+                        <a href="#" class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                            Visiter le site
+                            <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 flex items-start transition-all duration-300">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 flex-shrink-0">
+                        <i class="ri-heart-pulse-fill text-primary ri-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Fédération Française de Cardiologie</h3>
+                        <p class="text-gray-600 mb-3">Informations spécialisées sur l'hypertension artérielle et les maladies cardiovasculaires associées.</p>
+                        <a href="#" class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                            Visiter le site
+                            <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 flex items-start transition-all duration-300">
+                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full mr-4 flex-shrink-0">
+                        <i class="ri-syringe-fill text-primary ri-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">Fédération Française des Diabétiques</h3>
+                        <p class="text-gray-600 mb-3">Ressources complètes pour les personnes vivant avec le diabète et leurs proches.</p>
+                        <a href="#" class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                            Visiter le site
+                            <i class="ri-external-link-line ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-6">Documents téléchargeables</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
+                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Guide d'alimentation pour diabétiques</h3>
+                            <span class="text-gray-500 text-sm">PDF • 3.2 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Un guide complet avec des recommandations nutritionnelles, des exemples de menus et des recettes adaptées aux personnes diabétiques.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
+                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Carnet de suivi de tension artérielle</h3>
+                            <span class="text-gray-500 text-sm">PDF • 1.8 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Un carnet pratique pour enregistrer et suivre vos mesures de tension artérielle quotidiennes et partager ces données avec votre médecin.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-md mr-3">
+                            <i class="ri-file-excel-fill text-green-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Tableau de suivi glycémique</h3>
+                            <span class="text-gray-500 text-sm">XLSX • 0.9 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Un tableau Excel pour enregistrer et analyser vos mesures de glycémie, avec graphiques automatiques pour visualiser les tendances.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-md mr-3">
+                            <i class="ri-file-word-fill text-blue-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Modèle de plan d'action personnalisé</h3>
+                            <span class="text-gray-500 text-sm">DOCX • 1.5 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Un document modifiable pour créer votre plan d'action personnalisé avec votre médecin, incluant objectifs et stratégies de gestion.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
+                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Guide d'exercices physiques adaptés</h3>
+                            <span class="text-gray-500 text-sm">PDF • 4.7 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Un guide illustré d'exercices physiques spécialement conçus pour les personnes atteintes de diabète et d'hypertension.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+
+                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
+                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Fiche d'urgence médicale</h3>
+                            <span class="text-gray-500 text-sm">PDF • 0.5 MB</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Une fiche à compléter et à porter sur soi, contenant vos informations médicales essentielles en cas d'urgence.</p>
+                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                        <i class="ri-download-line mr-2"></i>
+                        Télécharger
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-sm p-8 mb-16">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-2xl font-bold mb-4">Vous ne trouvez pas ce que vous cherchez ?</h2>
+                <p class="text-gray-600 mb-6">Notre équipe est disponible pour vous aider à trouver les ressources dont vous avez besoin.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-primary text-white px-6 py-3 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition">
+                        Contacter notre équipe
+                    </button>
+                    <button class="bg-white border border-gray-200 text-gray-700 px-6 py-3 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
+                        Proposer une ressource
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('focus', function() {
+                this.classList.add('ring-2', 'ring-primary', 'ring-opacity-50');
+            });
+            searchInput.addEventListener('blur', function() {
+                this.classList.remove('ring-2', 'ring-primary', 'ring-opacity-50');
+            });
+
+            // Resource cards hover effect
+            const resourceCards = document.querySelectorAll('.resource-card');
+            resourceCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow-md');
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow-md');
+                });
+            });
+
+            // Download buttons
+            const downloadButtons = document.querySelectorAll('button:has(.ri-download-line)');
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="ri-check-line mr-2"></i>Téléchargé';
+                    this.classList.remove('bg-primary');
+                    this.classList.add('bg-green-500');
+
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('bg-green-500');
+                        this.classList.add('bg-primary');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

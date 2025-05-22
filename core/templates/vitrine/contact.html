@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SantéChat - Contactez-nous</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#4ECDC4'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #1A5F7A;
+            box-shadow: 0 0 0 1px rgba(26, 95, 122, 0.2);
+        }
+        .form-input.error {
+            border-color: #EF4444;
+        }
+        .error-message {
+            color: #EF4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .form-input.error + .error-message {
+            display: block;
+        }
+        .success-message {
+            display: none;
+        }
+        .success-message.show {
+            display: flex;
+        }
+        .submit-button {
+            transition: all 0.3s ease;
+        }
+        .submit-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    {% include 'partials/header.html' %}
+
+    <!-- Page Title Section -->
+    <section class="pt-32 pb-12 bg-primary/5">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="font-poppins text-4xl md:text-5xl font-bold text-gray-900 mb-4">Contactez-nous</h1>
+            <p class="text-lg text-gray-700 max-w-2xl mx-auto">Vous avez des questions sur SantéChat ou besoin d'assistance ? Notre équipe est là pour vous aider. Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.</p>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8">
+                <div class="success-message mb-6 items-center p-4 bg-green-100 text-green-800 rounded-lg">
+                    <div class="w-6 h-6 flex items-center justify-center mr-3">
+                        <i class="ri-check-line ri-lg"></i>
+                    </div>
+                    <p>Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.</p>
+                </div>
+                
+                <form id="contactForm" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 font-medium mb-2">Nom complet</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-500">
+                                    <i class="ri-user-line"></i>
+                                </div>
+                            </div>
+                            <input type="text" id="name" name="name" class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 rounded-button text-gray-800" placeholder="Votre nom complet" required>
+                            <div class="error-message">Veuillez entrer votre nom</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-gray-700 font-medium mb-2">Adresse email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-500">
+                                    <i class="ri-mail-line"></i>
+                                </div>
+                            </div>
+                            <input type="email" id="email" name="email" class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 rounded-button text-gray-800" placeholder="votre.email@exemple.com" required>
+                            <div class="error-message">Veuillez entrer une adresse email valide</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="phone" class="block text-gray-700 font-medium mb-2">Téléphone <span class="text-gray-500 text-sm">(optionnel)</span></label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-500">
+                                    <i class="ri-phone-line"></i>
+                                </div>
+                            </div>
+                            <input type="tel" id="phone" name="phone" class="form-input w-full pl-10 pr-4 py-3 border border-gray-300 rounded-button text-gray-800" placeholder="+33 6 12 34 56 78">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="subject" class="block text-gray-700 font-medium mb-2">Sujet</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-500">
+                                    <i class="ri-chat-1-line"></i>
+                                </div>
+                            </div>
+                            <select id="subject" name="subject" class="form-input w-full pl-10 pr-10 py-3 border border-gray-300 rounded-button text-gray-800 appearance-none bg-white" required>
+                                <option value="" disabled selected>Sélectionnez un sujet</option>
+                                <option value="question">Question générale</option>
+                                <option value="support">Support technique</option>
+                                <option value="partnership">Partenariat</option>
+                                <option value="feedback">Commentaires et suggestions</option>
+                                <option value="other">Autre</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <div class="w-5 h-5 flex items-center justify-center text-gray-500">
+                                    <i class="ri-arrow-down-s-line"></i>
+                                </div>
+                            </div>
+                            <div class="error-message">Veuillez sélectionner un sujet</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+                        <textarea id="message" name="message" rows="5" class="form-input w-full px-4 py-3 border border-gray-300 rounded-button text-gray-800 resize-none" placeholder="Votre message..." required></textarea>
+                        <div class="error-message">Veuillez entrer votre message</div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="privacy" name="privacy" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-white focus:ring-0 text-primary" required>
+                        </div>
+                        <label for="privacy" class="ml-2 text-sm text-gray-700">
+                            J'accepte que mes données soient traitées conformément à la <a href="#" class="text-primary hover:underline">politique de confidentialité</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-button w-full bg-primary text-white font-medium py-3 px-6 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-all flex items-center justify-center">
+                        <span>Envoyer le message</span>
+                        <div class="w-5 h-5 flex items-center justify-center ml-2">
+                            <i class="ri-send-plane-fill"></i>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="w-16 h-16 flex items-center justify-center bg-primary/10 rounded-full mb-4 mx-auto">
+                        <i class="ri-mail-line ri-xl text-primary"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2">Email</h3>
+                    <p class="text-gray-700 mb-4">Notre équipe vous répondra sous 24h</p>
+                    <a href="mailto:contact@santechat.fr" class="text-primary hover:underline font-medium">contact@santechat.fr</a>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="w-16 h-16 flex items-center justify-center bg-secondary/10 rounded-full mb-4 mx-auto">
+                        <i class="ri-phone-line ri-xl text-secondary"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2">Téléphone</h3>
+                    <p class="text-gray-700 mb-4">Disponible du lundi au vendredi, 9h-18h</p>
+                    <a href="tel:+33123456789" class="text-primary hover:underline font-medium">+33 1 23 45 67 89</a>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow text-center">
+                    <div class="w-16 h-16 flex items-center justify-center bg-[#FF9F1C]/10 rounded-full mb-4 mx-auto">
+                        <i class="ri-map-pin-line ri-xl text-[#FF9F1C]"></i>
+                    </div>
+                    <h3 class="font-poppins text-xl font-semibold text-gray-900 mb-2">Adresse</h3>
+                    <p class="text-gray-700 mb-4">Venez nous rencontrer</p>
+                    <p class="text-primary font-medium">123 Avenue de la Santé, 75001 Paris, France</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="h-[400px] rounded-lg overflow-hidden shadow-md" style="background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png'); background-position: center; background-size: cover;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-primary/5">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-4">Questions fréquentes sur le contact</h2>
+                <p class="text-lg text-gray-700 max-w-3xl mx-auto">Retrouvez les réponses aux questions les plus courantes concernant notre service client.</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-6">
+                    <button class="flex justify-between items-center w-full text-left p-4 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                        <h3 class="font-poppins font-medium text-gray-900">Quel est le délai de réponse habituel ?</h3>
+                        <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
+                    </button>
+                    <div class="p-4 bg-white border border-gray-100 rounded-b-lg mt-1">
+                        <p class="text-gray-700">Nous nous efforçons de répondre à toutes les demandes dans un délai de 24 heures ouvrées. Pour les questions plus complexes, le délai peut être légèrement plus long, mais nous vous tiendrons informé de l'avancement de votre demande.</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <button class="flex justify-between items-center w-full text-left p-4 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                        <h3 class="font-poppins font-medium text-gray-900">Comment puis-je contacter le support technique ?</h3>
+                        <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
+                    </button>
+                    <div class="hidden">
+                        <p class="text-gray-700 p-4">Pour contacter notre support technique, vous pouvez utiliser le formulaire de contact en sélectionnant "Support technique" dans le menu déroulant, ou envoyer un email directement à support@santechat.fr. Pour les problèmes urgents, nous vous recommandons d'appeler notre ligne d'assistance au +33 1 23 45 67 89.</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <button class="flex justify-between items-center w-full text-left p-4 bg-white rounded-lg hover:bg-gray-50 transition-colors">
+                        <h3 class="font-poppins font-medium text-gray-900">Puis-je prendre rendez-vous pour une démonstration ?</h3>
+                        <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
+                    </button>
+                    <div class="hidden">
+                        <p class="text-gray-700 p-4">Oui, nous proposons des démonstrations personnalisées de SantéChat. Pour planifier une démo, veuillez utiliser le formulaire de contact en sélectionnant "Partenariat" comme sujet et préciser dans votre message que vous souhaitez une démonstration. Un membre de notre équipe vous contactera pour organiser un rendez-vous à votre convenance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'partials/footer.html' %}
+
+    <script src="{% static 'js/contactForm.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

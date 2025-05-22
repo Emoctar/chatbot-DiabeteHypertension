@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation des Risques de Santé - SantéChat</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1A5F7A',secondary:'#E5E7EB'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+            outline: none;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1A5F7A;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+        .range-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1A5F7A;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+        .custom-radio {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .custom-radio-input {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1A5F7A;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+        }
+        .custom-radio-input:checked::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background-color: #1A5F7A;
+            border-radius: 50%;
+        }
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .custom-checkbox-input {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #1A5F7A;
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+        }
+        .custom-checkbox-input:checked::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background-color: #1A5F7A;
+            border-radius: 2px;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #1A5F7A;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #E5E7EB;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .switch-slider {
+            background-color: #1A5F7A;
+        }
+        input:checked + .switch-slider:before {
+            transform: translateX(26px);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .result-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(26, 95, 122, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    {% include 'partials/header.html' %}
+
+    <main class="pt-28 pb-16 px-4">
+        <div class="container mx-auto max-w-5xl">
+            <section class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Évaluez votre risque de santé</h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Utilisez nos outils d'évaluation validés par des professionnels pour estimer votre risque de diabète et d'hypertension. Ces tests vous aideront à prendre des décisions éclairées pour votre santé.</p>
+            </section>
+
+            <div class="bg-white rounded-xl shadow-md overflow-hidden mb-16">
+                <div class="flex border-b border-gray-200">
+                    <button id="tab-diabete" class="tab-btn flex-1 py-4 font-medium text-center text-primary border-b-2 border-primary">
+                        <div class="flex items-center justify-center">
+                            <div class="w-6 h-6 flex items-center justify-center mr-2">
+                                <i class="ri-heart-pulse-line"></i>
+                            </div>
+                            <span>Risque de Diabète</span>
+                        </div>
+                    </button>
+                    <button id="tab-hypertension" class="tab-btn flex-1 py-4 font-medium text-center text-gray-500 hover:text-gray-700">
+                        <div class="flex items-center justify-center">
+                            <div class="w-6 h-6 flex items-center justify-center mr-2">
+                                <i class="ri-pulse-line"></i>
+                            </div>
+                            <span>Risque d'Hypertension</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Contenu du test Diabète (FINDRISC) -->
+                <div id="content-diabete" class="tab-content active p-6">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Test FINDRISC - Évaluation du risque de diabète</h2>
+                        <p class="text-gray-600">Le test FINDRISC (FInnish Diabetes RIsk SCore) a été établi par l'Association Finlandaise du Diabète. C'est un outil validé et recommandé par la Haute Autorité de Santé pour identifier les personnes à risque de développer un diabète de type 2 dans les 10 prochaines années.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Progression</span>
+                            <span class="text-sm font-medium text-gray-700" id="diabete-progress-text">Question 1/8</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" id="diabete-progress-bar" style="width: 12.5%"></div>
+                        </div>
+                    </div>
+
+                    <form id="diabete-form">
+                        <!-- Question 1: Âge -->
+                        <div class="diabete-question" data-question="1">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">1. Quel est votre âge ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-age" value="0" class="custom-radio-input" required>
+                                        <span>Moins de 45 ans</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-age" value="2" class="custom-radio-input">
+                                        <span>45-54 ans</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-age" value="3" class="custom-radio-input">
+                                        <span>55-64 ans</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-age" value="4" class="custom-radio-input">
+                                        <span>Plus de 64 ans</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 2: IMC -->
+                        <div class="diabete-question hidden" data-question="2">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                    2. Quel est votre Indice de Masse Corporelle (IMC) ?
+                                    <div class="tooltip inline-block ml-2">
+                                        <div class="w-5 h-5 flex items-center justify-center text-primary bg-primary/10 rounded-full">
+                                            <i class="ri-question-line ri-sm"></i>
+                                        </div>
+                                        <span class="tooltip-text text-sm">L'IMC se calcule en divisant votre poids (kg) par votre taille au carré (m²). Exemple: 70kg ÷ (1.70m × 1.70m) = 24.2</span>
+                                    </div>
+                                </h3>
+
+                                <div class="mb-4 p-4 bg-white rounded-lg shadow-sm">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Poids (kg)</label>
+                                            <input type="number" id="diabete-poids" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 70">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Taille (cm)</label>
+                                            <input type="number" id="diabete-taille" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 170">
+                                        </div>
+                                    </div>
+                                    <button type="button" id="calculer-imc" class="bg-primary/10 text-primary px-4 py-2 !rounded-button hover:bg-primary/20 transition-colors font-medium">
+                                        Calculer mon IMC
+                                    </button>
+                                    <div id="resultat-imc" class="mt-4 hidden">
+                                        <div class="flex items-center">
+                                            <span class="text-lg font-semibold mr-2">Votre IMC:</span>
+                                            <span id="valeur-imc" class="text-lg font-bold text-primary">-</span>
+                                        </div>
+                                        <p id="interpretation-imc" class="text-sm text-gray-600 mt-1"></p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 mt-4">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-imc" value="0" class="custom-radio-input" required>
+                                        <span>Moins de 25 kg/m²</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-imc" value="1" class="custom-radio-input">
+                                        <span>25-30 kg/m²</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-imc" value="3" class="custom-radio-input">
+                                        <span>Plus de 30 kg/m²</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 3: Tour de taille -->
+                        <div class="diabete-question hidden" data-question="3">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                    3. Quel est votre tour de taille au niveau du nombril (en cm) ?
+                                    <div class="tooltip inline-block ml-2">
+                                        <div class="w-5 h-5 flex items-center justify-center text-primary bg-primary/10 rounded-full">
+                                            <i class="ri-question-line ri-sm"></i>
+                                        </div>
+                                        <span class="tooltip-text text-sm">Mesurez votre tour de taille en position debout en passant un mètre ruban au niveau du nombril.</span>
+                                    </div>
+                                </h3>
+
+                                <div class="mb-6">
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Homme</h4>
+                                    <div class="space-y-3">
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="0" class="custom-radio-input" required>
+                                            <span>Moins de 94 cm</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="3" class="custom-radio-input">
+                                            <span>94-102 cm</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="4" class="custom-radio-input">
+                                            <span>Plus de 102 cm</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Femme</h4>
+                                    <div class="space-y-3">
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="0" class="custom-radio-input">
+                                            <span>Moins de 80 cm</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="3" class="custom-radio-input">
+                                            <span>80-88 cm</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="diabete-tour-taille" value="4" class="custom-radio-input">
+                                            <span>Plus de 88 cm</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4: Activité physique -->
+                        <div class="diabete-question hidden" data-question="4">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">4. Pratiquez-vous une activité physique d'au moins 30 minutes par jour ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-activite" value="0" class="custom-radio-input" required>
+                                        <span>Oui</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-activite" value="2" class="custom-radio-input">
+                                        <span>Non</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 5: Consommation de fruits/légumes -->
+                        <div class="diabete-question hidden" data-question="5">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">5. À quelle fréquence consommez-vous des fruits et légumes ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-alimentation" value="0" class="custom-radio-input" required>
+                                        <span>Tous les jours</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-alimentation" value="1" class="custom-radio-input">
+                                        <span>Pas tous les jours</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 6: Antécédents d'hypertension -->
+                        <div class="diabete-question hidden" data-question="6">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">6. Avez-vous déjà pris des médicaments contre l'hypertension artérielle ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-hypertension" value="0" class="custom-radio-input" required>
+                                        <span>Non</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-hypertension" value="2" class="custom-radio-input">
+                                        <span>Oui</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 7: Antécédents de glycémie élevée -->
+                        <div class="diabete-question hidden" data-question="7">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">7. Avez-vous déjà eu une glycémie élevée (lors d'un examen de santé, pendant une maladie, durant une grossesse) ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-glycemie" value="0" class="custom-radio-input" required>
+                                        <span>Non</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-glycemie" value="5" class="custom-radio-input">
+                                        <span>Oui</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 8: Antécédents familiaux de diabète -->
+                        <div class="diabete-question hidden" data-question="8">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">8. Est-ce qu'un membre de votre famille a été diagnostiqué diabétique ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-famille" value="0" class="custom-radio-input" required>
+                                        <span>Non</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-famille" value="3" class="custom-radio-input">
+                                        <span>Oui, des grands-parents, oncles, tantes ou cousins</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="diabete-famille" value="5" class="custom-radio-input">
+                                        <span>Oui, des parents, frères, sœurs ou enfants</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Résultats Diabète -->
+                        <div class="diabete-question hidden" data-question="results">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center text-primary">
+                                    <i class="ri-heart-pulse-line ri-4x"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Votre score FINDRISC</h3>
+                                <div class="flex justify-center items-center">
+                                    <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
+                                        <span id="diabete-score-value" class="text-2xl font-bold text-white">-</span>
+                                    </div>
+                                </div>
+                                <p class="text-lg font-medium mt-4" id="diabete-risk-level">Calcul en cours...</p>
+                            </div>
+
+                            <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                                <h4 class="font-semibold text-gray-900 mb-4">Interprétation de votre score</h4>
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                                        <h5 class="font-medium text-green-800">Score inférieur à 7 : Risque faible</h5>
+                                        <p class="text-green-700 mt-1">Environ 1 personne sur 100 développera un diabète de type 2.</p>
+                                    </div>
+                                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                                        <h5 class="font-medium text-yellow-800">Score de 7 à 11 : Risque légèrement élevé</h5>
+                                        <p class="text-yellow-700 mt-1">Environ 1 personne sur 25 développera un diabète de type 2.</p>
+                                    </div>
+                                    <div class="p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                                        <h5 class="font-medium text-orange-800">Score de 12 à 14 : Risque modéré</h5>
+                                        <p class="text-orange-700 mt-1">Environ 1 personne sur 6 développera un diabète de type 2.</p>
+                                    </div>
+                                    <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                                        <h5 class="font-medium text-red-800">Score de 15 à 20 : Risque élevé</h5>
+                                        <p class="text-red-700 mt-1">Environ 1 personne sur 3 développera un diabète de type 2.</p>
+                                    </div>
+                                    <div class="p-4 bg-red-100 border-l-4 border-red-600 rounded">
+                                        <h5 class="font-medium text-red-900">Score supérieur à 20 : Risque très élevé</h5>
+                                        <p class="text-red-800 mt-1">Environ 1 personne sur 2 développera un diabète de type 2.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="diabete-recommendations" class="bg-primary/5 p-6 rounded-lg mb-8">
+                                <h4 class="font-semibold text-gray-900 mb-4">Recommandations personnalisées</h4>
+                                <div class="space-y-3" id="diabete-recommendations-content">
+                                    <!-- Les recommandations seront insérées ici par JavaScript -->
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button type="button" id="diabete-restart" class="bg-white border border-primary text-primary py-3 flex-1 !rounded-button hover:bg-primary/5 transition-colors font-medium">
+                                    Refaire le test
+                                </button>
+                                <button type="button" id="diabete-print" class="bg-primary text-white py-3 flex-1 !rounded-button hover:bg-primary/90 transition-colors font-medium">
+                                    Imprimer mes résultats
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between mt-8 diabete-navigation">
+                            <button type="button" id="diabete-prev" class="bg-gray-200 text-gray-700 px-6 py-3 !rounded-button hover:bg-gray-300 transition-colors font-medium whitespace-nowrap" disabled>
+                                Précédent
+                            </button>
+                            <button type="button" id="diabete-next" class="bg-primary text-white px-6 py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium whitespace-nowrap">
+                                Suivant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Contenu du test Hypertension -->
+                <div id="content-hypertension" class="tab-content p-6">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Évaluation du risque d'hypertension</h2>
+                        <p class="text-gray-600">Ce test vous permet d'évaluer votre risque de développer une hypertension artérielle en fonction de différents facteurs de risque. L'hypertension est un facteur de risque majeur pour les maladies cardiovasculaires.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-gray-700">Progression</span>
+                            <span class="text-sm font-medium text-gray-700" id="hypertension-progress-text">Question 1/7</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" id="hypertension-progress-bar" style="width: 14.3%"></div>
+                        </div>
+                    </div>
+
+                    <form id="hypertension-form">
+                        <!-- Question 1: Âge et sexe -->
+                        <div class="hypertension-question" data-question="1">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">1. Quel est votre âge et votre sexe ?</h3>
+                                
+                                <div class="mb-6">
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Sexe</h4>
+                                    <div class="flex space-x-4">
+                                        <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-sexe" value="homme" class="custom-radio-input" required>
+                                            <span>Homme</span>
+                                        </label>
+                                        <label class="custom-radio flex items-center p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-sexe" value="femme" class="custom-radio-input">
+                                            <span>Femme</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="text-md font-medium text-gray-700 mb-2">Âge</h4>
+                                    <div class="space-y-3">
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-age" value="0" class="custom-radio-input" required>
+                                            <span>Moins de 35 ans</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-age" value="1" class="custom-radio-input">
+                                            <span>35-44 ans</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-age" value="2" class="custom-radio-input">
+                                            <span>45-54 ans</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-age" value="3" class="custom-radio-input">
+                                            <span>55-64 ans</span>
+                                        </label>
+                                        <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                            <input type="radio" name="hypertension-age" value="4" class="custom-radio-input">
+                                            <span>65 ans et plus</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2: Tension artérielle actuelle -->
+                        <div class="hypertension-question hidden" data-question="2">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                    2. Connaissez-vous votre tension artérielle actuelle ?
+                                    <div class="tooltip inline-block ml-2">
+                                        <div class="w-5 h-5 flex items-center justify-center text-primary bg-primary/10 rounded-full">
+                                            <i class="ri-question-line ri-sm"></i>
+                                        </div>
+                                        <span class="tooltip-text text-sm">La tension artérielle s'exprime par deux valeurs: systolique/diastolique (ex: 120/80 mmHg)</span>
+                                    </div>
+                                </h3>
+
+                                <div class="mb-6">
+                                    <div class="flex items-center mb-4">
+                                        <label class="custom-switch mr-3">
+                                            <input type="checkbox" id="connait-tension">
+                                            <span class="switch-slider"></span>
+                                        </label>
+                                        <span class="text-gray-700">Oui, je connais ma tension artérielle</span>
+                                    </div>
+
+                                    <div id="tension-inputs" class="hidden">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 bg-white rounded-lg shadow-sm">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Systolique (mmHg)</label>
+                                                <input type="number" id="tension-systolique" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 120">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Diastolique (mmHg)</label>
+                                                <input type="number" id="tension-diastolique" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 80">
+                                            </div>
+                                        </div>
+                                        <div id="tension-interpretation" class="hidden p-3 rounded-lg mt-2"></div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tension" value="0" class="custom-radio-input" required>
+                                        <span>Tension normale (inférieure à 120/80 mmHg)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tension" value="1" class="custom-radio-input">
+                                        <span>Tension normale élevée (120-129/80-84 mmHg)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tension" value="2" class="custom-radio-input">
+                                        <span>Pré-hypertension (130-139/85-89 mmHg)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tension" value="3" class="custom-radio-input">
+                                        <span>Hypertension (140/90 mmHg ou plus)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tension" value="1" class="custom-radio-input">
+                                        <span>Je ne connais pas ma tension artérielle</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3: Antécédents familiaux -->
+                        <div class="hypertension-question hidden" data-question="3">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">3. Avez-vous des antécédents familiaux d'hypertension artérielle ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-famille" value="0" class="custom-radio-input" required>
+                                        <span>Non, aucun membre de ma famille n'a d'hypertension</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-famille" value="1" class="custom-radio-input">
+                                        <span>Oui, des grands-parents, oncles ou tantes</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-famille" value="2" class="custom-radio-input">
+                                        <span>Oui, un parent, frère ou sœur</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-famille" value="3" class="custom-radio-input">
+                                        <span>Oui, plusieurs parents proches (parents, frères, sœurs)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-famille" value="1" class="custom-radio-input">
+                                        <span>Je ne sais pas</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4: IMC -->
+                        <div class="hypertension-question hidden" data-question="4">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                                    4. Quel est votre Indice de Masse Corporelle (IMC) ?
+                                    <div class="tooltip inline-block ml-2">
+                                        <div class="w-5 h-5 flex items-center justify-center text-primary bg-primary/10 rounded-full">
+                                            <i class="ri-question-line ri-sm"></i>
+                                        </div>
+                                        <span class="tooltip-text text-sm">L'IMC se calcule en divisant votre poids (kg) par votre taille au carré (m²). Exemple: 70kg ÷ (1.70m × 1.70m) = 24.2</span>
+                                    </div>
+                                </h3>
+
+                                <div class="mb-4 p-4 bg-white rounded-lg shadow-sm">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Poids (kg)</label>
+                                            <input type="number" id="hypertension-poids" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 70">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Taille (cm)</label>
+                                            <input type="number" id="hypertension-taille" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none" placeholder="Ex: 170">
+                                        </div>
+                                    </div>
+                                    <button type="button" id="calculer-imc-hypertension" class="bg-primary/10 text-primary px-4 py-2 !rounded-button hover:bg-primary/20 transition-colors font-medium">
+                                        Calculer mon IMC
+                                    </button>
+                                    <div id="resultat-imc-hypertension" class="mt-4 hidden">
+                                        <div class="flex items-center">
+                                            <span class="text-lg font-semibold mr-2">Votre IMC:</span>
+                                            <span id="valeur-imc-hypertension" class="text-lg font-bold text-primary">-</span>
+                                        </div>
+                                        <p id="interpretation-imc-hypertension" class="text-sm text-gray-600 mt-1"></p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 mt-4">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-imc" value="0" class="custom-radio-input" required>
+                                        <span>IMC normal (18.5-24.9)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-imc" value="1" class="custom-radio-input">
+                                        <span>Surpoids (25-29.9)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-imc" value="2" class="custom-radio-input">
+                                        <span>Obésité modérée (30-34.9)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-imc" value="3" class="custom-radio-input">
+                                        <span>Obésité sévère (35 ou plus)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 5: Habitudes de vie - Tabac -->
+                        <div class="hypertension-question hidden" data-question="5">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">5. Fumez-vous du tabac ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tabac" value="0" class="custom-radio-input" required>
+                                        <span>Non, je n'ai jamais fumé</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tabac" value="1" class="custom-radio-input">
+                                        <span>J'ai arrêté de fumer depuis plus de 5 ans</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tabac" value="2" class="custom-radio-input">
+                                        <span>J'ai arrêté de fumer depuis moins de 5 ans</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tabac" value="3" class="custom-radio-input">
+                                        <span>Je fume occasionnellement (moins de 10 cigarettes par jour)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-tabac" value="4" class="custom-radio-input">
+                                        <span>Je fume régulièrement (10 cigarettes ou plus par jour)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Question 6: Habitudes de vie - Activité physique -->
+                        <div class="hypertension-question hidden" data-question="6">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">6. Quel est votre niveau d'activité physique ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-activite" value="0" class="custom-radio-input" required>
+                                        <span>Activité physique régulière (au moins 150 minutes par semaine)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-activite" value="1" class="custom-radio-input">
+                                        <span>Activité physique modérée (60-149 minutes par semaine)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-activite" value="2" class="custom-radio-input">
+                                        <span>Activité physique légère (moins de 60 minutes par semaine)</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-activite" value="3" class="custom-radio-input">
+                                        <span>Sédentaire (presque pas d'activité physique)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 7: Régime alimentaire -->
+                        <div class="hypertension-question hidden" data-question="7">
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">7. Comment qualifieriez-vous votre alimentation ?</h3>
+                                <div class="space-y-3">
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-alimentation" value="0" class="custom-radio-input" required>
+                                        <span>Alimentation équilibrée, pauvre en sel et riche en fruits et légumes</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-alimentation" value="1" class="custom-radio-input">
+                                        <span>Alimentation assez équilibrée, mais consommation modérée de sel</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-alimentation" value="2" class="custom-radio-input">
+                                        <span>Alimentation déséquilibrée, riche en sel et pauvre en fruits et légumes</span>
+                                    </label>
+                                    <label class="custom-radio block p-3 border border-gray-200 rounded-lg hover:bg-primary/5">
+                                        <input type="radio" name="hypertension-alimentation" value="3" class="custom-radio-input">
+                                        <span>Alimentation très déséquilibrée, riche en sel, graisses et aliments transformés</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Résultats Hypertension -->
+                        <div class="hypertension-question hidden" data-question="results">
+                            <div class="text-center mb-8">
+                                <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center text-primary">
+                                    <i class="ri-pulse-line ri-4x"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Votre risque d'hypertension</h3>
+                                <div class="flex justify-center items-center">
+                                    <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
+                                        <span id="hypertension-score-value" class="text-2xl font-bold text-white">-</span>
+                                    </div>
+                                </div>
+                                <p class="text-lg font-medium mt-4" id="hypertension-risk-level">Calcul en cours...</p>
+                            </div>
+
+                            <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                                <h4 class="font-semibold text-gray-900 mb-4">Interprétation de votre score</h4>
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                                        <h5 class="font-medium text-green-800">Score de 0 à 7 : Risque faible</h5>
+                                        <p class="text-green-700 mt-1">Votre risque de développer une hypertension artérielle est faible.</p>
+                                    </div>
+                                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                                        <h5 class="font-medium text-yellow-800">Score de 8 à 12 : Risque modéré</h5>
+                                        <p class="text-yellow-700 mt-1">Votre risque de développer une hypertension artérielle est modéré.</p>
+                                    </div>
+                                    <div class="p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                                        <h5 class="font-medium text-orange-800">Score de 13 à 17 : Risque élevé</h5>
+                                        <p class="text-orange-700 mt-1">Votre risque de développer une hypertension artérielle est élevé.</p>
+                                    </div>
+                                    <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                                        <h5 class="font-medium text-red-800">Score de 18 à 23 : Risque très élevé</h5>
+                                        <p class="text-red-700 mt-1">Votre risque de développer une hypertension artérielle est très élevé.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="hypertension-recommendations" class="bg-primary/5 p-6 rounded-lg mb-8">
+                                <h4 class="font-semibold text-gray-900 mb-4">Recommandations personnalisées</h4>
+                                <div class="space-y-3" id="hypertension-recommendations-content">
+                                    <!-- Les recommandations seront insérées ici par JavaScript -->
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button type="button" id="hypertension-restart" class="bg-white border border-primary text-primary py-3 flex-1 !rounded-button hover:bg-primary/5 transition-colors font-medium">
+                                    Refaire le test
+                                </button>
+                                <button type="button" id="hypertension-print" class="bg-primary text-white py-3 flex-1 !rounded-button hover:bg-primary/90 transition-colors font-medium">
+                                    Imprimer mes résultats
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between mt-8 hypertension-navigation">
+                            <button type="button" id="hypertension-prev" class="bg-gray-200 text-gray-700 px-6 py-3 !rounded-button hover:bg-gray-300 transition-colors font-medium whitespace-nowrap" disabled>
+                                Précédent
+                            </button>
+                            <button type="button" id="hypertension-next" class="bg-primary text-white px-6 py-3 !rounded-button hover:bg-primary/90 transition-colors font-medium whitespace-nowrap">
+                                Suivant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <section class="mt-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="result-card bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="w-16 h-16 mb-4 flex items-center justify-center text-primary">
+                            <i class="ri-heart-pulse-line ri-3x"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Diabète de Type 2</h3>
+                        <p class="text-gray-600 mb-4">Le diabète de type 2 est une maladie chronique caractérisée par un taux élevé de sucre dans le sang. Il survient lorsque le corps devient résistant à l'insuline ou ne produit pas suffisamment d'insuline.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Facteurs de risque</span>
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Prévention</span>
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Symptômes</span>
+                        </div>
+                        <a href="#" class="text-primary font-medium hover:underline">En savoir plus →</a>
+                    </div>
+
+                    <div class="result-card bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="w-16 h-16 mb-4 flex items-center justify-center text-primary">
+                            <i class="ri-pulse-line ri-3x"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Hypertension Artérielle</h3>
+                        <p class="text-gray-600 mb-4">L'hypertension artérielle est une condition médicale caractérisée par une pression artérielle élevée dans les artères. Elle augmente le risque de maladies cardiaques, d'AVC et d'autres problèmes de santé.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Facteurs de risque</span>
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Prévention</span>
+                            <span class="inline-block bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">Traitement</span>
+                        </div>
+                        <a href="#" class="text-primary font-medium hover:underline">En savoir plus →</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des onglets
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Réinitialiser tous les boutons et contenus
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                        btn.classList.add('text-gray-500', 'hover:text-gray-700');
+                    });
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // Activer l'onglet cliqué
+                    this.classList.add('text-primary', 'border-b-2', 'border-primary');
+                    this.classList.remove('text-gray-500', 'hover:text-gray-700');
+                    
+                    const tabId = this.id.replace('tab-', 'content-');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // Calculateur d'IMC pour le diabète
+            const calculerImcBtn = document.getElementById('calculer-imc');
+            const poidsInput = document.getElementById('diabete-poids');
+            const tailleInput = document.getElementById('diabete-taille');
+            const resultatImc = document.getElementById('resultat-imc');
+            const valeurImc = document.getElementById('valeur-imc');
+            const interpretationImc = document.getElementById('interpretation-imc');
+            const imcRadios = document.querySelectorAll('input[name="diabete-imc"]');
+            calculerImcBtn.addEventListener('click', function() {
+                const poids = parseFloat(poidsInput.value);
+                const taille = parseFloat(tailleInput.value) / 100; // Conversion en mètres
+                
+                if (poids && taille) {
+                    const imc = poids / (taille * taille);
+                    valeurImc.textContent = imc.toFixed(1);
+                    
+                    // Sélectionner automatiquement le bon radio button
+                    if (imc < 25) {
+                        imcRadios[0].checked = true;
+                        interpretationImc.textContent = "Poids normal";
+                        interpretationImc.className = "text-sm text-green-600 mt-1";
+                    } else if (imc >= 25 && imc < 30) {
+                        imcRadios[1].checked = true;
+                        interpretationImc.textContent = "Surpoids";
+                        interpretationImc.className = "text-sm text-yellow-600 mt-1";
+                    } else {
+                        imcRadios[2].checked = true;
+                        interpretationImc.textContent = "Obésité";
+                        interpretationImc.className = "text-sm text-red-600 mt-1";
+                    }
+                    
+                    resultatImc.classList.remove('hidden');
+                } else {
+                    alert('Veuillez entrer votre poids et votre taille.');
+                }
+            });
+
+            // Calculateur d'IMC pour l'hypertension
+            const calculerImcHypertensionBtn = document.getElementById('calculer-imc-hypertension');
+            const poidsHypertensionInput = document.getElementById('hypertension-poids');
+            const tailleHypertensionInput = document.getElementById('hypertension-taille');
+            const resultatImcHypertension = document.getElementById('resultat-imc-hypertension');
+            const valeurImcHypertension = document.getElementById('valeur-imc-hypertension');
+            const interpretationImcHypertension = document.getElementById('interpretation-imc-hypertension');
+            const imcHypertensionRadios = document.querySelectorAll('input[name="hypertension-imc"]');
+            calculerImcHypertensionBtn.addEventListener('click', function() {
+                const poids = parseFloat(poidsHypertensionInput.value);
+                const taille = parseFloat(tailleHypertensionInput.value) / 100; // Conversion en mètres
+                
+                if (poids && taille) {
+                    const imc = poids / (taille * taille);
+                    valeurImcHypertension.textContent = imc.toFixed(1);
+                    
+                    // Sélectionner automatiquement le bon radio button
+                    if (imc >= 18.5 && imc < 25) {
+                        imcHypertensionRadios[0].checked = true;
+                        interpretationImcHypertension.textContent = "Poids normal";
+                        interpretationImcHypertension.className = "text-sm text-green-600 mt-1";
+                    } else if (imc >= 25 && imc < 30) {
+                        imcHypertensionRadios[1].checked = true;
+                        interpretationImcHypertension.textContent = "Surpoids";
+                        interpretationImcHypertension.className = "text-sm text-yellow-600 mt-1";
+                    } else if (imc >= 30 && imc < 35) {
+                        imcHypertensionRadios[2].checked = true;
+                        interpretationImcHypertension.textContent = "Obésité modérée";
+                        interpretationImcHypertension.className = "text-sm text-orange-600 mt-1";
+                    } else if (imc >= 35) {
+                        imcHypertensionRadios[3].checked = true;
+                        interpretationImcHypertension.textContent = "Obésité sévère";
+                        interpretationImcHypertension.className = "text-sm text-red-600 mt-1";
+                    }
+                    
+                    resultatImcHypertension.classList.remove('hidden');
+                } else {
+                    alert('Veuillez entrer votre poids et votre taille.');
+                }
+            });
+
+            // Gestion de la tension artérielle
+            const connaitTensionCheckbox = document.getElementById('connait-tension');
+            const tensionInputs = document.getElementById('tension-inputs');
+            const tensionSystolique = document.getElementById('tension-systolique');
+            const tensionDiastolique = document.getElementById('tension-diastolique');
+            const tensionInterpretation = document.getElementById('tension-interpretation');
+            const tensionRadios = document.querySelectorAll('input[name="hypertension-tension"]');
+
+            connaitTensionCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    tensionInputs.classList.remove('hidden');
+                } else {
+                    tensionInputs.classList.add('hidden');
+                    tensionInterpretation.classList.add('hidden');
+                }
+            });
+
+            // Interpréter la tension artérielle lorsque les valeurs sont entrées
+            function interpreterTension() {
+                const systolique = parseInt(tensionSystolique.value);
+                const diastolique = parseInt(tensionDiastolique.value);
+                
+                if (systolique && diastolique) {
+                    tensionInterpretation.classList.remove('hidden');
+                    
+                    if (systolique < 120 && diastolique < 80) {
+                        tensionInterpretation.className = "p-3 rounded-lg mt-2 bg-green-50 text-green-800";
+                        tensionInterpretation.textContent = "Tension normale";
+                        tensionRadios[0].checked = true;
+                    } else if ((systolique >= 120 && systolique <= 129) || (diastolique >= 80 && diastolique <= 84)) {
+                        tensionInterpretation.className = "p-3 rounded-lg mt-2 bg-yellow-50 text-yellow-800";
+                        tensionInterpretation.textContent = "Tension normale élevée";
+                        tensionRadios[1].checked = true;
+                    } else if ((systolique >= 130 && systolique <= 139) || (diastolique >= 85 && diastolique <= 89)) {
+                        tensionInterpretation.className = "p-3 rounded-lg mt-2 bg-orange-50 text-orange-800";
+                        tensionInterpretation.textContent = "Pré-hypertension";
+                        tensionRadios[2].checked = true;
+                    } else if (systolique >= 140 || diastolique >= 90) {
+                        tensionInterpretation.className = "p-3 rounded-lg mt-2 bg-red-50 text-red-800";
+                        tensionInterpretation.textContent = "Hypertension";
+                        tensionRadios[3].checked = true;
+                    }
+                } else {
+                    tensionInterpretation.classList.add('hidden');
+                }
+            }
+
+            tensionSystolique.addEventListener('input', interpreterTension);
+            tensionDiastolique.addEventListener('input', interpreterTension);
+            // Navigation dans le test Diabète
+            const diabeteQuestions = document.querySelectorAll('.diabete-question');
+            const diabetePrevBtn = document.getElementById('diabete-prev');
+            const diabeteNextBtn = document.getElementById('diabete-next');
+            const diabeteProgressBar = document.getElementById('diabete-progress-bar');
+            const diabeteProgressText = document.getElementById('diabete-progress-text');
+            let diabeteCurrentQuestion = 1;
+            const diabeteTotalQuestions = 8;
+
+            function updateDiabeteProgress() {
+                const progress = (diabeteCurrentQuestion / diabeteTotalQuestions) * 100;
+                diabeteProgressBar.style.width = `${progress}%`;
+                diabeteProgressText.textContent = `Question ${diabeteCurrentQuestion}/${diabeteTotalQuestions}`;
+                
+                diabetePrevBtn.disabled = diabeteCurrentQuestion === 1;
+                
+                if (diabeteCurrentQuestion === diabeteTotalQuestions) {
+                    diabeteNextBtn.textContent = 'Voir les résultats';
+                } else {
+                    diabeteNextBtn.textContent = 'Suivant';
+                }
+            }
+
+            function showDiabeteQuestion(questionNumber) {
+                diabeteQuestions.forEach(question => {
+                    question.classList.add('hidden');
+                });
+                
+                if (questionNumber === 'results') {
+                    document.querySelector('.diabete-question[data-question="results"]').classList.remove('hidden');
+                    document.querySelector('.diabete-navigation').classList.add('hidden');
+                    calculateDiabeteScore();
+                } else {
+                    document.querySelector(`.diabete-question[data-question="${questionNumber}"]`).classList.remove('hidden');
+                    document.querySelector('.diabete-navigation').classList.remove('hidden');
+                }
+            }
+
+            diabeteNextBtn.addEventListener('click', function() {
+                // Vérifier si la question actuelle a été répondue
+                const currentQuestionElement = document.querySelector(`.diabete-question[data-question="${diabeteCurrentQuestion}"]`);
+                const radioButtons = currentQuestionElement.querySelectorAll('input[type="radio"]');
+                let isAnswered = false;
+                
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        isAnswered = true;
+                    }
+                });
+                
+                if (!isAnswered) {
+                    alert('Veuillez répondre à la question avant de continuer.');
+                    return;
+                }
+                
+                if (diabeteCurrentQuestion === diabeteTotalQuestions) {
+                    showDiabeteQuestion('results');
+                } else {
+                    diabeteCurrentQuestion++;
+                    showDiabeteQuestion(diabeteCurrentQuestion);
+                    updateDiabeteProgress();
+                }
+            });
+
+            diabetePrevBtn.addEventListener('click', function() {
+                if (diabeteCurrentQuestion > 1) {
+                    diabeteCurrentQuestion--;
+                    showDiabeteQuestion(diabeteCurrentQuestion);
+                    updateDiabeteProgress();
+                }
+            });
+
+            // Calculer le score du test Diabète
+            function calculateDiabeteScore() {
+                let score = 0;
+                
+                // Âge
+                const ageValue = document.querySelector('input[name="diabete-age"]:checked').value;
+                score += parseInt(ageValue);
+                
+                // IMC
+                const imcValue = document.querySelector('input[name="diabete-imc"]:checked').value;
+                score += parseInt(imcValue);
+                
+                // Tour de taille
+                const tourTailleValue = document.querySelector('input[name="diabete-tour-taille"]:checked').value;
+                score += parseInt(tourTailleValue);
+                
+                // Activité physique
+                const activiteValue = document.querySelector('input[name="diabete-activite"]:checked').value;
+                score += parseInt(activiteValue);
+                
+                // Alimentation
+                const alimentationValue = document.querySelector('input[name="diabete-alimentation"]:checked').value;
+                score += parseInt(alimentationValue);
+                
+                // Hypertension
+                const hypertensionValue = document.querySelector('input[name="diabete-hypertension"]:checked').value;
+                score += parseInt(hypertensionValue);
+                
+                // Glycémie
+                const glycemieValue = document.querySelector('input[name="diabete-glycemie"]:checked').value;
+                score += parseInt(glycemieValue);
+                
+                // Antécédents familiaux
+                const familleValue = document.querySelector('input[name="diabete-famille"]:checked').value;
+                score += parseInt(familleValue);
+                
+                // Afficher le score
+                document.getElementById('diabete-score-value').textContent = score;
+                
+                // Déterminer le niveau de risque
+                let riskLevel = '';
+                let riskColor = '';
+                
+                if (score < 7) {
+                    riskLevel = 'Risque faible';
+                    riskColor = 'text-green-600';
+                } else if (score >= 7 && score <= 11) {
+                    riskLevel = 'Risque légèrement élevé';
+                    riskColor = 'text-yellow-600';
+                } else if (score >= 12 && score <= 14) {
+                    riskLevel = 'Risque modéré';
+                    riskColor = 'text-orange-600';
+                } else if (score >= 15 && score <= 20) {
+                    riskLevel = 'Risque élevé';
+                    riskColor = 'text-red-600';
+                } else {
+                    riskLevel = 'Risque très élevé';
+                    riskColor = 'text-red-800';
+                }
+                
+                const riskLevelElement = document.getElementById('diabete-risk-level');
+                riskLevelElement.textContent = riskLevel;
+                riskLevelElement.className = `text-lg font-medium mt-4 ${riskColor}`;
+                
+                // Générer des recommandations personnalisées
+                const recommendationsContainer = document.getElementById('diabete-recommendations-content');
+                recommendationsContainer.innerHTML = '';
+                
+                const commonRecommendations = [
+                    {
+                        icon: 'ri-restaurant-line',
+                        title: 'Alimentation équilibrée',
+                        content: 'Privilégiez une alimentation riche en fruits, légumes, céréales complètes et pauvre en sucres raffinés.'
+                    },
+                    {
+                        icon: 'ri-run-line',
+                        title: 'Activité physique régulière',
+                        content: 'Pratiquez au moins 30 minutes d\'activité physique modérée 5 jours par semaine.'
+                    },
+                    {
+                        icon: 'ri-scales-line',
+                        title: 'Maintien d\'un poids santé',
+                        content: 'Visez un IMC entre 18,5 et 25 pour réduire votre risque de diabète.'
+                    }
+                ];
+                
+                // Ajouter des recommandations spécifiques selon le score
+                if (score >= 12) {
+                    commonRecommendations.push({
+                        icon: 'ri-heart-pulse-line',
+                        title: 'Suivi médical',
+                        content: 'Consultez votre médecin pour un dépistage du diabète et un suivi régulier.'
+                    });
+                }
+                
+                if (score >= 15) {
+                    commonRecommendations.push({
+                        icon: 'ri-test-tube-line',
+                        title: 'Contrôle de la glycémie',
+                        content: 'Faites contrôler votre glycémie à jeun au moins une fois par an.'
+                    });
+                }
+                
+                // Générer le HTML pour les recommandations
+                commonRecommendations.forEach(rec => {
+                    const recElement = document.createElement('div');
+                    recElement.className = 'flex items-start';
+                    recElement.innerHTML = `
+                        <div class="w-10 h-10 flex items-center justify-center text-primary bg-white rounded-full shadow-sm mr-4">
+                            <i class="${rec.icon} ri-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-900">${rec.title}</h5>
+                            <p class="text-gray-700 mt-1">${rec.content}</p>
+                        </div>
+                    `;
+                    recommendationsContainer.appendChild(recElement);
+                });
+            }
+
+            // Redémarrer le test Diabète
+            document.getElementById('diabete-restart').addEventListener('click', function() {
+                diabeteCurrentQuestion = 1;
+                showDiabeteQuestion(diabeteCurrentQuestion);
+                updateDiabeteProgress();
+                
+                // Réinitialiser tous les radio buttons
+                document.querySelectorAll('#diabete-form input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                });
+                
+                // Réinitialiser les calculateurs d'IMC
+                document.getElementById('diabete-poids').value = '';
+                document.getElementById('diabete-taille').value = '';
+                document.getElementById('resultat-imc').classList.add('hidden');
+            });
+
+            // Imprimer les résultats Diabète
+            document.getElementById('diabete-print').addEventListener('click', function() {
+                window.print();
+            });
+
+            // Navigation dans le test Hypertension
+            const hypertensionQuestions = document.querySelectorAll('.hypertension-question');
+            const hypertensionPrevBtn = document.getElementById('hypertension-prev');
+            const hypertensionNextBtn = document.getElementById('hypertension-next');
+            const hypertensionProgressBar = document.getElementById('hypertension-progress-bar');
+            const hypertensionProgressText = document.getElementById('hypertension-progress-text');
+            let hypertensionCurrentQuestion = 1;
+            const hypertensionTotalQuestions = 7;
+
+            function updateHypertensionProgress() {
+                const progress = (hypertensionCurrentQuestion / hypertensionTotalQuestions) * 100;
+                hypertensionProgressBar.style.width = `${progress}%`;
+                hypertensionProgressText.textContent = `Question ${hypertensionCurrentQuestion}/${hypertensionTotalQuestions}`;
+                
+                hypertensionPrevBtn.disabled = hypertensionCurrentQuestion === 1;
+                
+                if (hypertensionCurrentQuestion === hypertensionTotalQuestions) {
+                    hypertensionNextBtn.textContent = 'Voir les résultats';
+                } else {
+                    hypertensionNextBtn.textContent = 'Suivant';
+                }
+            }
+
+            function showHypertensionQuestion(questionNumber) {
+                hypertensionQuestions.forEach(question => {
+                    question.classList.add('hidden');
+                });
+                
+                if (questionNumber === 'results') {
+                    document.querySelector('.hypertension-question[data-question="results"]').classList.remove('hidden');
+                    document.querySelector('.hypertension-navigation').classList.add('hidden');
+                    calculateHypertensionScore();
+                } else {
+                    document.querySelector(`.hypertension-question[data-question="${questionNumber}"]`).classList.remove('hidden');
+                    document.querySelector('.hypertension-navigation').classList.remove('hidden');
+                }
+            }
+            hypertensionNextBtn.addEventListener('click', function() {
+                // Vérifier si la question actuelle a été répondue
+                const currentQuestionElement = document.querySelector(`.hypertension-question[data-question="${hypertensionCurrentQuestion}"]`);
+                const radioButtons = currentQuestionElement.querySelectorAll('input[type="radio"]');
+                let isAnswered = false;
+                
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        isAnswered = true;
+                    }
+                });
+                
+                if (!isAnswered) {
+                    alert('Veuillez répondre à la question avant de continuer.');
+                    return;
+                }
+                
+                if (hypertensionCurrentQuestion === hypertensionTotalQuestions) {
+                    showHypertensionQuestion('results');
+                } else {
+                    hypertensionCurrentQuestion++;
+                    showHypertensionQuestion(hypertensionCurrentQuestion);
+                    updateHypertensionProgress();
+                }
+            });
+
+            hypertensionPrevBtn.addEventListener('click', function() {
+                if (hypertensionCurrentQuestion > 1) {
+                    hypertensionCurrentQuestion--;
+                    showHypertensionQuestion(hypertensionCurrentQuestion);
+                    updateHypertensionProgress();
+                }
+            });
+
+            // Calculer le score du test Hypertension
+            function calculateHypertensionScore() {
+                let score = 0;
+                
+                // Âge
+                const ageValue = document.querySelector('input[name="hypertension-age"]:checked').value;
+                score += parseInt(ageValue);
+                
+                // Sexe (bonus pour les hommes)
+                const sexeValue = document.querySelector('input[name="hypertension-sexe"]:checked').value;
+                if (sexeValue === 'homme') {
+                    score += 1;
+                }
+                
+                // Tension artérielle
+                const tensionValue = document.querySelector('input[name="hypertension-tension"]:checked').value;
+                score += parseInt(tensionValue);
+                
+                // Antécédents familiaux
+                const familleValue = document.querySelector('input[name="hypertension-famille"]:checked').value;
+                score += parseInt(familleValue);
+                
+                // IMC
+                const imcValue = document.querySelector('input[name="hypertension-imc"]:checked').value;
+                score += parseInt(imcValue);
+                
+                // Tabac
+                const tabacValue = document.querySelector('input[name="hypertension-tabac"]:checked').value;
+                score += parseInt(tabacValue);
+                
+                // Activité physique
+                const activiteValue = document.querySelector('input[name="hypertension-activite"]:checked').value;
+                score += parseInt(activiteValue);
+                
+                // Alimentation
+                const alimentationValue = document.querySelector('input[name="hypertension-alimentation"]:checked').value;
+                score += parseInt(alimentationValue);
+                
+                // Afficher le score
+                document.getElementById('hypertension-score-value').textContent = score;
+                
+                // Déterminer le niveau de risque
+                let riskLevel = '';
+                let riskColor = '';
+                
+                if (score <= 7) {
+                    riskLevel = 'Risque faible';
+                    riskColor = 'text-green-600';
+                } else if (score >= 8 && score <= 12) {
+                    riskLevel = 'Risque modéré';
+                    riskColor = 'text-yellow-600';
+                } else if (score >= 13 && score <= 17) {
+                    riskLevel = 'Risque élevé';
+                    riskColor = 'text-orange-600';
+                } else {
+                    riskLevel = 'Risque très élevé';
+                    riskColor = 'text-red-600';
+                }
+                
+                const riskLevelElement = document.getElementById('hypertension-risk-level');
+                riskLevelElement.textContent = riskLevel;
+                riskLevelElement.className = `text-lg font-medium mt-4 ${riskColor}`;
+                
+                // Générer des recommandations personnalisées
+                const recommendationsContainer = document.getElementById('hypertension-recommendations-content');
+                recommendationsContainer.innerHTML = '';
+                
+                const commonRecommendations = [
+                    {
+                        icon: 'ri-restaurant-line',
+                        title: 'Réduire la consommation de sel',
+                        content: 'Limitez votre consommation de sel à moins de 5g par jour (environ 1 cuillère à café).'
+                    },
+                    {
+                        icon: 'ri-run-line',
+                        title: 'Activité physique régulière',
+                        content: 'Pratiquez au moins 150 minutes d\'activité physique modérée par semaine.'
+                    },
+                    {
+                        icon: 'ri-scales-line',
+                        title: 'Maintien d\'un poids santé',
+                        content: 'Visez un IMC entre 18,5 et 25 pour réduire votre risque d\'hypertension.'
+                    }
+                ];
+                
+                // Ajouter des recommandations spécifiques selon le score
+                if (parseInt(tabacValue) >= 2) {
+                    commonRecommendations.push({
+                        icon: 'ri-forbid-line',
+                        title: 'Arrêt du tabac',
+                        content: 'Le tabagisme augmente considérablement le risque d\'hypertension et de maladies cardiovasculaires.'
+                    });
+                }
+                
+                if (score >= 13) {
+                    commonRecommendations.push({
+                        icon: 'ri-heart-pulse-line',
+                        title: 'Suivi médical',
+                        content: 'Consultez votre médecin pour un contrôle régulier de votre tension artérielle.'
+                    });
+                }
+                
+                // Générer le HTML pour les recommandations
+                commonRecommendations.forEach(rec => {
+                    const recElement = document.createElement('div');
+                    recElement.className = 'flex items-start';
+                    recElement.innerHTML = `
+                        <div class="w-10 h-10 flex items-center justify-center text-primary bg-white rounded-full shadow-sm mr-4">
+                            <i class="${rec.icon} ri-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-900">${rec.title}</h5>
+                            <p class="text-gray-700 mt-1">${rec.content}</p>
+                        </div>
+                    `;
+                    recommendationsContainer.appendChild(recElement);
+                });
+            }
+
+            // Redémarrer le test Hypertension
+            document.getElementById('hypertension-restart').addEventListener('click', function() {
+                hypertensionCurrentQuestion = 1;
+                showHypertensionQuestion(hypertensionCurrentQuestion);
+                updateHypertensionProgress();
+                
+                // Réinitialiser tous les radio buttons
+                document.querySelectorAll('#hypertension-form input[type="radio"]').forEach(radio => {
+                    radio.checked = false;
+                });
+                
+                // Réinitialiser les calculateurs d'IMC
+                document.getElementById('hypertension-poids').value = '';
+                document.getElementById('hypertension-taille').value = '';
+                document.getElementById('resultat-imc-hypertension').classList.add('hidden');
+                
+                // Réinitialiser les inputs de tension
+                document.getElementById('connait-tension').checked = false;
+                document.getElementById('tension-inputs').classList.add('hidden');
+                document.getElementById('tension-systolique').value = '';
+                document.getElementById('tension-diastolique').value = '';
+                document.getElementById('tension-interpretation').classList.add('hidden');
+            });
+
+            // Imprimer les résultats Hypertension
+            document.getElementById('hypertension-print').addEventListener('click', function() {
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>
