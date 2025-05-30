@@ -26,6 +26,7 @@ def get_admin_stats():
     }
 
 
+
 # Vue de connexion (basée sur une classe)
 
 class LoginView(FormView):

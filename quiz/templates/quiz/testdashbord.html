@@ -1,0 +1,19 @@
+
+<h1>📊 Statistiques des quiz</h1>
+
+<table class="table table-striped">
+  <tr>
+    <th>Nombre de participations</th>
+    <td>{{ stats.total }}</td>
+  </tr>
+  <tr>
+    <th>Score moyen</th>
+    <td>{{ stats.avg_score|floatformat:2 }}</td>
+  </tr>
+  <tr>
+    <th>Durée moyenne (en sec)</th>
+    <td>{{ stats.avg_duration|floatformat:2 }}</td>
+  </tr>
+</table>
+
+
