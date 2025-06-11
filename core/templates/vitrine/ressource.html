@@ -58,114 +58,93 @@
             <div class="max-w-4xl mx-auto text-center mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold mb-4">Ressources sur le diabète et l'hypertension</h1>
                 <p class="text-gray-600 text-lg mb-8">Découvrez notre collection d'articles, de guides et de sources officielles pour mieux comprendre et gérer ces conditions.</p>
-
+                
                 <div class="relative max-w-2xl mx-auto">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="ri-search-line text-gray-400 ri-lg"></i>
-                    </div>
-                    <input type="text" class="search-input w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700" placeholder="Rechercher des ressources...">
+                    <form method="get" action="{% url 'core:list' %}">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="ri-search-line text-gray-400 ri-lg"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ search_query }}" class="search-input w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-700" placeholder="Rechercher des ressources...">
+                    </form>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow-sm p-4 mb-10">
+           <div class="bg-white rounded-lg shadow-sm p-4 mb-10">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex flex-wrap gap-3">
-                        <button class="bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap">
+                        <a href="{% url 'core:list' %}" class="{% if not current_type %}bg-primary text-white{% else %}bg-white text-gray-700 border border-gray-200 hover:bg-gray-50{% endif %} px-4 py-2 !rounded-button font-medium whitespace-nowrap">
                             Tout
-                        </button>
-                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
-                            Articles
-                        </button>
-                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
-                            Sources officielles
-                        </button>
-                        <button class="bg-white text-gray-700 border border-gray-200 px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-gray-50">
-                            Documents
-                        </button>
+                        </a>
+                        {% for type_code, type_name in available_types %}
+                        <a href="{% url 'core:list' %}?type={{ type_code }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}" class="{% if current_type == type_code %}bg-primary text-white{% else %}bg-white text-gray-700 border border-gray-200 hover:bg-gray-50{% endif %} px-4 py-2 !rounded-button font-medium whitespace-nowrap">
+                            {{ type_name }}
+                        </a>
+                        {% endfor %}
                     </div>
-
+                    
                     <div class="flex flex-wrap gap-3">
+                        {% for category_code, category_name in available_categories %}
                         <div class="flex items-center gap-2">
-                            <input type="checkbox" id="diabete" class="custom-checkbox">
-                            <label for="diabete" class="text-gray-700 cursor-pointer">Diabète</label>
+                            <input type="checkbox" id="{{ category_code }}" name="category" value="{{ category_code }}" class="custom-checkbox" {% if current_category == category_code %}checked{% endif %} onchange="document.location.href='{% url 'core:list' %}?{% if current_type %}type={{ current_type }}&{% endif %}{% if search_query %}search={{ search_query }}&{% endif %}category={% if current_category == category_code %}{% else %}{{ category_code }}{% endif %}'">
+                            <label for="{{ category_code }}" class="text-gray-700 cursor-pointer">{{ category_name }}</label>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="hypertension" class="custom-checkbox">
-                            <label for="hypertension" class="text-gray-700 cursor-pointer">Hypertension</label>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="mb-16">
-            <h2 class="text-2xl font-bold mb-6">Articles de fond</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
-                    <img src="https://readdy.ai/api/search-image?query=Medical%20professional%20explaining%20diabetes%20to%20patient%2C%20medical%20office%20setting%2C%20educational%20materials%20on%20desk%2C%20warm%20lighting%2C%20professional%20environment%2C%20detailed%20medical%20charts%20visible&width=600&height=400&seq=1&orientation=landscape" alt="Comprendre le diabète" class="w-full h-48 object-cover object-top">
-                    <div class="p-6">
-                        <div class="flex items-center mb-3">
-                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Diabète</span>
-                            <span class="text-gray-500 text-sm ml-auto">12 min de lecture</span>
+                <h2 class="text-2xl font-bold mb-6">Articles de fond</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for article in articles %}
+                    <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
+                        {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" class="w-full h-48 object-cover object-top">
+                        {% else %}
+                        <img src="https://readdy.ai/api/search-image?query=Medical%20professional%20explaining%20diabetes%20to%20patient%2C%20medical%20office%20setting%2C%20educational%20materials%20on%20desk%2C%20warm%20lighting%2C%20professional%20environment%2C%20detailed%20medical%20charts%20visible&width=600&height=400&seq={{ forloop.counter }}&orientation=landscape" alt="{{ article.title }}" class="w-full h-48 object-cover object-top">
+                        {% endif %}
+                        <div class="p-6">
+                            <div class="flex items-center mb-3">
+                                <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                    {% for cat_code, cat_name in available_categories %}
+                                        {% if cat_code == article.category %}{{ cat_name }}{% endif %}
+                                    {% endfor %}
+                                </span>
+                                {% if article.category == 'general' %}
+                                <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full ml-2">Général</span>
+                                {% endif %}
+                                <span class="text-gray-500 text-sm ml-auto">{{ article.reading_time|default:"10" }} min de lecture</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">{{ article.title }}</h3>
+                            <p class="text-gray-600 mb-4">{{ article.description|truncatechars:120 }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-500 text-sm">Publié le {{ article.formatted_date }}</span>
+                                <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
+                                    Lire plus
+                                    <i class="ri-arrow-right-line ml-1"></i>
+                                </a>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2">Comprendre le diabète de type 2 : causes, symptômes et traitements</h3>
-                        <p class="text-gray-600 mb-4">Un guide complet pour comprendre les mécanismes du diabète de type 2, reconnaître ses symptômes et explorer les options de traitement disponibles.</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-500 text-sm">Publié le 28 avril 2025</span>
-                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
-                                Lire plus
-                                <i class="ri-arrow-right-line ml-1"></i>
-                            </button>
-                        </div>
+                    </article>
+                    {% empty %}
+                    <div class="col-span-3 text-center py-8">
+                        <p class="text-gray-500">Aucun article disponible pour le moment.</p>
                     </div>
-                </article>
-
-                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
-                    <img src="https://readdy.ai/api/search-image?query=Doctor%20measuring%20blood%20pressure%20of%20elderly%20patient%2C%20medical%20office%20with%20blood%20pressure%20chart%20on%20wall%2C%20natural%20lighting%2C%20professional%20healthcare%20setting%2C%20detailed%20medical%20equipment&width=600&height=400&seq=2&orientation=landscape" alt="Hypertension artérielle" class="w-full h-48 object-cover object-top">
-                    <div class="p-6">
-                        <div class="flex items-center mb-3">
-                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Hypertension</span>
-                            <span class="text-gray-500 text-sm ml-auto">9 min de lecture</span>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">L'hypertension artérielle : facteurs de risque et prévention</h3>
-                        <p class="text-gray-600 mb-4">Découvrez les facteurs qui contribuent à l'hypertension et les stratégies efficaces pour maintenir une tension artérielle saine au quotidien.</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-500 text-sm">Publié le 15 avril 2025</span>
-                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
-                                Lire plus
-                                <i class="ri-arrow-right-line ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="resource-card bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300">
-                    <img src="https://readdy.ai/api/search-image?query=Person%20preparing%20healthy%20meal%20with%20vegetables%2C%20whole%20grains%2C%20and%20lean%20protein%2C%20bright%20kitchen%20setting%2C%20nutrition%20guide%20visible%2C%20natural%20lighting%2C%20detailed%20food%20preparation&width=600&height=400&seq=3&orientation=landscape" alt="Alimentation équilibrée" class="w-full h-48 object-cover object-top">
-                    <div class="p-6">
-                        <div class="flex items-center mb-3">
-                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full">Diabète</span>
-                            <span class="bg-blue-100 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full ml-2">Hypertension</span>
-                            <span class="text-gray-500 text-sm ml-auto">15 min de lecture</span>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Alimentation équilibrée pour contrôler le diabète et l'hypertension</h3>
-                        <p class="text-gray-600 mb-4">Un guide nutritionnel complet pour aider à gérer simultanément le diabète et l'hypertension grâce à des choix alimentaires adaptés.</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-500 text-sm">Publié le 5 mai 2025</span>
-                            <button class="text-primary font-medium flex items-center hover:underline whitespace-nowrap">
-                                Lire plus
-                                <i class="ri-arrow-right-line ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            <div class="text-center mt-8">
-                <button class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 !rounded-button font-medium hover:bg-gray-50 whitespace-nowrap">
-                    Voir plus d'articles
-                </button>
-            </div>
+                    {% endfor %}
+                </div>
+                {% if page_obj.has_other_pages %}
+                <div class="text-center mt-8">
+                    <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}{% if current_type %}type={{ current_type }}&{% endif %}page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.number }}{% endif %}" class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 !rounded-button font-medium hover:bg-gray-50 whitespace-nowrap">
+                        Voir plus d'articles
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center mt-8">
+                    <p class="text-gray-500">Aucune autre page disponible.</p>
+                </div>
+            {% endif %}
         </section>
-
         <section class="mb-16">
             <h2 class="text-2xl font-bold mb-6">Sources officielles</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -227,112 +206,31 @@
             </div>
         </section>
 
+         {% if documents %}
         <section class="mb-16">
             <h2 class="text-2xl font-bold mb-6">Documents téléchargeables</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for doc in documents %}
                 <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
                     <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
-                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
+                        <div class="w-10 h-10 flex items-center justify-center bg-{{ doc.file_icon_color }}-100 rounded-md mr-3">
+                            <i class="ri-{{ doc.file_icon }} text-{{ doc.file_icon_color }}-500 ri-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Guide d'alimentation pour diabétiques</h3>
-                            <span class="text-gray-500 text-sm">PDF • 3.2 MB</span>
+                            <h3 class="font-semibold">{{ doc.title }}</h3>
+                            <span class="text-gray-500 text-sm">{{ doc.file_type_display }} • {{ doc.file_size_mb }} MB</span>
                         </div>
                     </div>
-                    <p class="text-gray-600 mb-4">Un guide complet avec des recommandations nutritionnelles, des exemples de menus et des recettes adaptées aux personnes diabétiques.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
+                    <p class="text-gray-600 mb-4">{{ doc.description|truncatechars:100 }}</p>
+                    <a href="{% url 'core:download' resource_id=doc.id %}" class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
                         <i class="ri-download-line mr-2"></i>
                         Télécharger
-                    </button>
+                    </a>
                 </div>
-
-                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
-                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">Carnet de suivi de tension artérielle</h3>
-                            <span class="text-gray-500 text-sm">PDF • 1.8 MB</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">Un carnet pratique pour enregistrer et suivre vos mesures de tension artérielle quotidiennes et partager ces données avec votre médecin.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
-                        <i class="ri-download-line mr-2"></i>
-                        Télécharger
-                    </button>
-                </div>
-
-                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-md mr-3">
-                            <i class="ri-file-excel-fill text-green-500 ri-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">Tableau de suivi glycémique</h3>
-                            <span class="text-gray-500 text-sm">XLSX • 0.9 MB</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">Un tableau Excel pour enregistrer et analyser vos mesures de glycémie, avec graphiques automatiques pour visualiser les tendances.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
-                        <i class="ri-download-line mr-2"></i>
-                        Télécharger
-                    </button>
-                </div>
-
-                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-md mr-3">
-                            <i class="ri-file-word-fill text-blue-500 ri-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">Modèle de plan d'action personnalisé</h3>
-                            <span class="text-gray-500 text-sm">DOCX • 1.5 MB</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">Un document modifiable pour créer votre plan d'action personnalisé avec votre médecin, incluant objectifs et stratégies de gestion.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
-                        <i class="ri-download-line mr-2"></i>
-                        Télécharger
-                    </button>
-                </div>
-
-                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
-                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">Guide d'exercices physiques adaptés</h3>
-                            <span class="text-gray-500 text-sm">PDF • 4.7 MB</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">Un guide illustré d'exercices physiques spécialement conçus pour les personnes atteintes de diabète et d'hypertension.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
-                        <i class="ri-download-line mr-2"></i>
-                        Télécharger
-                    </button>
-                </div>
-
-                <div class="resource-card bg-white rounded-lg shadow-sm p-6 transition-all duration-300">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-md mr-3">
-                            <i class="ri-file-pdf-fill text-red-500 ri-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold">Fiche d'urgence médicale</h3>
-                            <span class="text-gray-500 text-sm">PDF • 0.5 MB</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 mb-4">Une fiche à compléter et à porter sur soi, contenant vos informations médicales essentielles en cas d'urgence.</p>
-                    <button class="w-full bg-primary text-white px-4 py-2 !rounded-button font-medium whitespace-nowrap hover:bg-blue-600 transition flex items-center justify-center">
-                        <i class="ri-download-line mr-2"></i>
-                        Télécharger
-                    </button>
-                </div>
+                {% endfor %}
             </div>
         </section>
+        {% endif %}
 
         <section class="bg-white rounded-lg shadow-sm p-8 mb-16">
             <div class="max-w-3xl mx-auto text-center">
