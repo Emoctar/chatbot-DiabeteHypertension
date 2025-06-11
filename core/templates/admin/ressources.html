@@ -1,0 +1,1366 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressources - Santé Diabète & Hypertension</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+   
+
+    <!-- Ou via CDN avec CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #1A5F7A;
+            --secondary: #4ECDC4;
+            --accent: #FF9F1C;
+            --white: #FFFFFF;
+            --light-gray: #F5F6FA;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --danger: #e74c3c;
+            --success: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 0.75rem;
+        }
+        
+        .sidebar-logo h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--white);
+            margin: 0;
+        }
+        
+        .menu {
+            list-style-type: none;
+            padding: 0 1rem;
+        }
+        
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.875rem 1rem;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        
+        .menu-link:hover, .menu-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-link i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-gray);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .search-bar input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+        }
+        
+        .search-bar i {
+            color: var(--text-light);
+            margin-right: 0.5rem;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn, .profile-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            color: var(--text-dark);
+            margin-left: 1rem;
+        }
+        
+        .notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--accent);
+            color: var(--white);
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .profile-btn img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Resources Page Specific Styles */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .resources-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            background-color: var(--white);
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+            min-width: 150px;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .resource-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .resource-image {
+            height: 160px;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .resource-image i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+        
+        .resource-category {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .category-diabetes {
+            color: var(--primary);
+        }
+        
+        .category-hypertension {
+            color: var(--secondary);
+        }
+        
+        .category-general {
+            color: var(--accent);
+        }
+        
+        .resource-content {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .resource-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .resource-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            font-size: 0.85rem;
+        }
+        
+        .resource-type {
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+        }
+        
+        .resource-type i {
+            margin-right: 0.5rem;
+        }
+        
+        .resource-date {
+            color: var(--text-light);
+        }
+        
+        .resource-actions {
+            display: flex;
+            margin-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+            padding-top: 1rem;
+        }
+        
+        .resource-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            flex: 1;
+        }
+        
+        .btn-view {
+            background-color: var(--primary);
+            color: var(--white);
+            margin-right: 0.5rem;
+        }
+        
+        .btn-download {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+        
+        .resource-btn i {
+            margin-right: 0.4rem;
+        }
+        
+        .add-resource-btn {
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .add-resource-btn:hover {
+            background-color: #3db7af;
+            transform: translateY(-2px);
+        }
+        
+        .add-resource-btn i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            color: var(--text-dark);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            color: var(--danger);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-cancel {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+        }
+        
+        .btn-submit {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23777777'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5rem;
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .resource-type-selector {
+            display: flex;
+            margin-bottom: 1.25rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .type-option {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: var(--text-dark);
+            position: relative;
+        }
+        
+        .type-option:first-child {
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        .type-option.active {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .type-option i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .resource-form-section {
+            display: none;
+        }
+        
+        .resource-form-section.active {
+            display: block;
+        }
+        
+        .file-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--secondary);
+        }
+        
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .file-upload-text {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-upload-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--light-gray);
+            border-radius: 20px;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-top: 0.5rem;
+        }
+        
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+        }
+        
+        .uploaded-file i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+        
+        .uploaded-file-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .uploaded-file-size {
+            color: var(--text-light);
+            margin-right: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .uploaded-file-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .placeholder-img {
+            display: inline-block;
+            background-color: var(--light-gray);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem 0;
+            }
+            
+            .sidebar-logo {
+                padding: 0 1rem 1rem;
+            }
+            
+            .sidebar-logo h2, .menu-link span {
+                display: none;
+            }
+            
+            .sidebar-logo img {
+                margin-right: 0;
+            }
+            
+            .menu-link {
+                justify-content: center;
+                padding: 0.75rem;
+            }
+            
+            .menu-link i {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-bar {
+                width: 100%;
+                max-width: none;
+                margin-bottom: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .resources-filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .filter-select {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 250px;
+                height: 100%;
+                z-index: 1000;
+                transition: all 0.3s ease;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: var(--primary);
+                color: var(--white);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: var(--shadow);
+            }
+            
+            .header {
+                margin-top: 3rem;
+            }
+
+            .modal {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    {% include 'partials/admin/sidebar.html' %}
+    <!-- Main Content -->
+    <main class="main-content">
+    <!-- Header -->
+    <header class="header">
+        <div>
+            <h3>Ressources</h3>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-header">
+        <h1 class="page-title">Ressources Médicales</h1>
+        <button class="add-resource-btn" id="openAddModal">
+            <i class="fas fa-plus"></i>
+            Ajouter une ressource
+        </button>
+    </div>
+
+
+
+    <!-- Filters -->
+    <div class="resources-filters">
+        <div class="filter-group">
+            <label class="filter-label">Catégorie:</label>
+            <select class="filter-select" id="categoryFilter">
+                <option value="all" {% if current_category == 'all' %}selected{% endif %}>Toutes les catégories</option>
+                <option value="diabetes" {% if current_category == 'diabetes' %}selected{% endif %}>Diabète</option>
+                <option value="hypertension" {% if current_category == 'hypertension' %}selected{% endif %}>Hypertension</option>
+                <option value="general" {% if current_category == 'general' %}selected{% endif %}>Général</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Type:</label>
+            <select class="filter-select" id="typeFilter">
+                <option value="all" {% if current_type == 'all' %}selected{% endif %}>Tous les types</option>
+                <option value="article" {% if current_type == 'article' %}selected{% endif %}>Articles</option>
+                <option value="document" {% if current_type == 'document' %}selected{% endif %}>Documents</option>
+                <option value="video" {% if current_type == 'video' %}selected{% endif %}>Vidéos</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Trier par:</label>
+            <select class="filter-select" id="sortFilter">
+                <option value="recent" {% if current_sort == 'recent' %}selected{% endif %}>Plus récents</option>
+                <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Plus populaires</option>
+                <option value="az" {% if current_sort == 'az' %}selected{% endif %}>A-Z</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Resources Grid -->
+    <div class="resource-grid">
+        {% for resource in resources %}
+        <div class="resource-card">
+            <div class="resource-image">
+                {% if resource.image %}
+                    <img src="{{ resource.image.url }}" alt="{{ resource.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div class="placeholder-img">
+                        <i class="{{ resource.get_icon_class }}"></i>
+                    </div>
+                {% endif %}
+                <span class="resource-category category-{{ resource.category }}">
+                    {{ resource.get_category_display }}
+                </span>
+            </div>
+            <div class="resource-content">
+                <h3 class="resource-title">{{ resource.title }}</h3>
+                <p class="resource-desc">{{ resource.description|truncatewords:20 }}</p>
+                <div class="resource-meta">
+                    <span class="resource-type">
+                        <i class="{{ resource.get_icon_class }}"></i>
+                        {% if resource.format_type == 'file' %}
+                            {{ resource.get_file_extension|upper }}
+                        {% else %}
+                            {{ resource.get_resource_type_display }}
+                        {% endif %}
+                    </span>
+                    <span class="resource-date">{{ resource.created_at|date:"d M Y" }}</span>
+                </div>
+                <div class="resource-actions">
+                    <button type="button" class="resource-btn btn-view" onclick="deleteResource({{ resource.id }})">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                    <a href="{% url 'core:edit' resource.id %}" class="resource-btn btn-download">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-resources">
+            <i class="fas fa-folder-open"></i>
+            <p>Aucune ressource trouvée.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+<!-- Add Resource Modal -->
+<div class="modal-overlay" id="addResourceModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Ajouter une nouvelle ressource</h2>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <form id="resourceForm" method="post" action="{% url 'core:add' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body">
+                <!-- Resource Type Selector -->
+                <div class="resource-type-selector">
+                    <div class="type-option active" data-type="file">
+                        <i class="fas fa-file"></i>
+                        <span>Fichier</span>
+                    </div>
+                    <div class="type-option" data-type="link">
+                        <i class="fas fa-link"></i>
+                        <span>Lien externe</span>
+                    </div>
+                </div>
+
+                <!-- Hidden field for format type -->
+                <input type="hidden" name="format_type" id="formatType" value="file">
+
+                <!-- Champs communs - toujours présents -->
+                <div class="form-group">
+                    <label class="form-label">Titre de la ressource</label>
+                    <input type="text" name="title" id="resourceTitle" class="form-control" placeholder="Entrez le titre de la ressource" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" id="resourceDescription" class="form-control form-textarea" placeholder="Décrivez brièvement cette ressource" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Catégorie</label>
+                    <select name="category" id="resourceCategory" class="form-select" required>
+                        <option value="">Sélectionnez une catégorie</option>
+                        <option value="diabetes">Diabète</option>
+                        <option value="hypertension">Hypertension</option>
+                        <option value="general">Général</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Type de ressource</label>
+                    <select name="resource_type" id="resourceType" class="form-select" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="article">Article</option>
+                        <option value="document">Document</option>
+                        <option value="video">Vidéo</option>
+                        <option value="website" style="display: none;">Site web</option>
+                    </select>
+                </div>
+
+                <!-- File Upload Section -->
+                <div class="resource-form-section active" id="fileUploadSection">
+                    <div class="form-group">
+                        <label class="form-label">Fichier</label>
+                        <div class="file-upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="file-upload-text">Glissez-déposez votre fichier ici</div>
+                            <span class="file-upload-btn">ou parcourir les fichiers</span>
+                            <input type="file" name="file" id="resourceFile">
+                        </div>
+                        <div class="uploaded-file" id="uploadedFile" style="display: none;">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="uploaded-file-name"></span>
+                            <span class="uploaded-file-size"></span>
+                            <button type="button" class="uploaded-file-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Link Section -->
+                <div class="resource-form-section" id="linkUploadSection">
+                    <div class="form-group">
+                        <label class="form-label">URL</label>
+                        <input type="url" name="url" id="resourceUrl" class="form-control" placeholder="https://">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image de la ressource</label>
+                        <div class="file-upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="file-upload-text">Glissez-déposez votre image ici</div>
+                            <span class="file-upload-btn">ou parcourir les fichiers</span>
+                            <input type="file" name="image" id="resourceImage" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn btn-cancel" id="cancelModal">Annuler</button>
+                <button type="submit" class="modal-btn btn-submit">Ajouter la ressource</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Add Resource Modal
+    const openAddModalBtn = document.getElementById('openAddModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelModalBtn = document.getElementById('cancelModal');
+    const addResourceModal = document.getElementById('addResourceModal');
+
+    openAddModalBtn.addEventListener('click', () => {
+        addResourceModal.classList.add('active');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        addResourceModal.classList.remove('active');
+        resetForm();
+    });
+
+    cancelModalBtn.addEventListener('click', () => {
+        addResourceModal.classList.remove('active');
+        resetForm();
+    });
+
+    // Resource Type Selector
+    const typeOptions = document.querySelectorAll('.type-option');
+    const fileUploadSection = document.getElementById('fileUploadSection');
+    const linkUploadSection = document.getElementById('linkUploadSection');
+    const formatTypeInput = document.getElementById('formatType');
+    const resourceTypeSelect = document.getElementById('resourceType');
+    const websiteOption = resourceTypeSelect.querySelector('option[value="website"]');
+
+    typeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove active class from all options
+            typeOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to clicked option
+            option.classList.add('active');
+            
+            // Update format type
+            formatTypeInput.value = option.dataset.type;
+            
+            // Show appropriate form section and update resource type options
+            if (option.dataset.type === 'file') {
+                fileUploadSection.classList.add('active');
+                linkUploadSection.classList.remove('active');
+                websiteOption.style.display = 'none';
+                // Reset resource type if it was set to website
+                if (resourceTypeSelect.value === 'website') {
+                    resourceTypeSelect.value = '';
+                }
+            } else {
+                fileUploadSection.classList.remove('active');
+                linkUploadSection.classList.add('active');
+                websiteOption.style.display = 'block';
+            }
+        });
+    });
+
+    // File Upload Preview
+    const resourceFileInput = document.getElementById('resourceFile');
+    const uploadedFilePreview = document.querySelector('.uploaded-file');
+    const uploadedFileName = document.querySelector('.uploaded-file-name');
+    const uploadedFileSize = document.querySelector('.uploaded-file-size');
+    const removeFileBtn = document.querySelector('.uploaded-file-remove');
+
+    resourceFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            uploadedFileName.textContent = file.name;
+            uploadedFileSize.textContent = formatFileSize(file.size);
+            uploadedFilePreview.style.display = 'flex';
+        }
+    });
+
+    removeFileBtn.addEventListener('click', () => {
+        resourceFileInput.value = '';
+        uploadedFilePreview.style.display = 'none';
+    });
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function resetForm() {
+        document.getElementById('resourceForm').reset();
+        uploadedFilePreview.style.display = 'none';
+        
+        // Reset to file type
+        typeOptions.forEach(opt => opt.classList.remove('active'));
+        typeOptions[0].classList.add('active');
+        fileUploadSection.classList.add('active');
+        linkUploadSection.classList.remove('active');
+        formatTypeInput.value = 'file';
+        websiteOption.style.display = 'none';
+    }
+
+    // Form submission avec gestion d'erreurs et SweetAlert
+    document.getElementById('resourceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        // Afficher un loader pendant l'ajout
+        Swal.fire({
+            title: 'Ajout en cours...',
+            text: 'Veuillez patienter pendant l\'ajout de la ressource',
+            icon: 'info',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Fermer le modal d'ajout
+                addResourceModal.classList.remove('active');
+                resetForm();
+                
+                // Afficher le succès avec SweetAlert
+                Swal.fire({
+                    title: 'Succès !',
+                    text: 'La ressource a été ajoutée avec succès',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#28a745'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Recharger la page pour voir la nouvelle ressource
+                        location.reload();
+                    }
+                });
+            } else {
+                // Afficher les erreurs avec SweetAlert
+                let errorMessage = 'Erreur lors de l\'ajout de la ressource. Vérifiez les champs requis.';
+                
+                if (data.errors && typeof data.errors === 'object') {
+                    const errorFields = Object.keys(data.errors);
+                    if (errorFields.length > 0) {
+                        errorMessage = `Erreurs dans les champs: ${errorFields.join(', ')}`;
+                    }
+                } else if (data.error) {
+                    errorMessage = data.error;
+                }
+                
+                Swal.fire({
+                    title: 'Erreur !',
+                    text: errorMessage,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            Swal.fire({
+                title: 'Erreur !',
+                text: 'Une erreur est survenue lors de l\'ajout de la ressource',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        });
+    });
+
+    // Fonction de suppression avec SweetAlert2
+    function deleteResource(resourceId) {
+        // Récupérer le titre de la ressource pour l'affichage
+        const resourceCard = document.querySelector(`button[onclick="deleteResource(${resourceId})"]`).closest('.resource-card');
+        const resourceTitle = resourceCard ? resourceCard.querySelector('.resource-title').textContent : 'cette ressource';
+        
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Êtes-vous sûr ?",
+            text: `Voulez-vous vraiment supprimer "${resourceTitle}" ? Cette action est irréversible !`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Oui, supprimer !",
+            cancelButtonText: "Non, annuler",
+            reverseButtons: true,
+            focusCancel: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Afficher un loader pendant la suppression
+                Swal.fire({
+                    title: 'Suppression en cours...',
+                    text: 'Veuillez patienter',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // Effectuer la suppression
+                const formData = new FormData();
+                
+                fetch(`core/delete/${resourceId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Supprimer visuellement la carte de ressource
+                        if (resourceCard) {
+                            resourceCard.style.transition = 'opacity 0.3s ease-out';
+                            resourceCard.style.opacity = '0';
+                            setTimeout(() => {
+                                resourceCard.remove();
+                            }, 300);
+                        }
+                        
+                        // Afficher le succès
+                        swalWithBootstrapButtons.fire({
+                            title: "Supprimé !",
+                            text: data.message || "La ressource a été supprimée avec succès",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#28a745"
+                        }).then(() => {
+                            // Recharger la page après un court délai
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        });
+                    } else {
+                        throw new Error(data.error || 'Erreur inconnue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    swalWithBootstrapButtons.fire({
+                        title: "Erreur !",
+                        text: `Erreur lors de la suppression: ${error.message}`,
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        confirmButtonColor: "#dc3545"
+                    });
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Annulé",
+                    text: "La ressource n'a pas été supprimée",
+                    icon: "info",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#6c757d"
+                });
+            }
+        });
+    }
+
+    // Fonction pour récupérer le token CSRF
+    function getCsrfToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+            return csrfToken.value;
+        }
+        
+        // Alternative: récupérer depuis les cookies
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrftoken') {
+                return value;
+            }
+        }
+        
+        return '';
+    }
+
+    // Mobile Menu Toggle
+    const menuToggleBtn = document.getElementById('menuToggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (menuToggleBtn && sidebar) {
+        menuToggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 576) {
+                if (!sidebar.contains(e.target) && e.target !== menuToggleBtn) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+    }
+
+    // Gestion des filtres avec actualisation en temps réel (optionnel)
+    const categoryFilter = document.getElementById('categoryFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const sortFilter = document.getElementById('sortFilter');
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            updateFilters();
+        });
+    }
+
+    if (typeFilter) {
+        typeFilter.addEventListener('change', function() {
+            updateFilters();
+        });
+    }
+
+    if (sortFilter) {
+        sortFilter.addEventListener('change', function() {
+            updateFilters();
+        });
+    }
+
+    function updateFilters() {
+        const params = new URLSearchParams();
+        
+        if (categoryFilter && categoryFilter.value !== 'all') {
+            params.set('category', categoryFilter.value);
+        }
+        
+        if (typeFilter && typeFilter.value !== 'all') {
+            params.set('type', typeFilter.value);
+        }
+        
+        if (sortFilter && sortFilter.value !== 'recent') {
+            params.set('sort', sortFilter.value);
+        }
+        
+        // Rediriger avec les nouveaux paramètres
+        const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.location.href = newUrl;
+    }
+</script>

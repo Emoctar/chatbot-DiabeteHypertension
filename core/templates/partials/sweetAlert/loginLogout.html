@@ -1,0 +1,49 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for message in messages %}
+            {% if message.message == "Vous avez été déconnecté avec succès." %}
+                Swal.fire({
+                    icon: 'info',
+                    title: "{{ message|escapejs }}",
+                    text: "À très bientôt sur SantéChat !",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: '#1A5F7A',
+                    timer: 2000
+                });
+            {% elif message.message|slice:":10" == "Bienvenue," %}
+                Swal.fire({
+                    icon: 'success',
+                    title: "{{ message|escapejs }}",
+                    text: "Ravi de vous revoir sur SantéChat.",
+                    confirmButtonText: "Merci",
+                    confirmButtonColor: '#1A5F7A',
+                    timer: 2000
+                });
+            {% elif message.message == "registration_success" %}
+                Swal.fire({
+                    title: "Bienvenue sur SantéChat !",
+                    text: "Votre compte a été créé avec succès. Prêt(e) à prendre soin de votre santé ?",
+                    width: 600,
+                    padding: "2em",
+                    color: "#1A5F7A",
+                    backdrop: `
+                        rgba(26,95,122,0.4)
+                        url("https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHVhenllN3kwMnUzNGl2M3EzMHozM2RjMW1ycnBtdWMxdW93NDFoeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GQlUu7wLzZ7iGNhzQJ/giphy.gif")
+                        right top
+                        no-repeat
+                        
+
+                    `,
+                    confirmButtonText: "Commencer",
+                    confirmButtonColor: "#1A5F7A",
+                    timer: 3000
+                });
+
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+{% endif %}

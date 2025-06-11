@@ -1,0 +1,46 @@
+   <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-heartbeat" style="font-size: 1.75rem;"></i>
+            <h2>MediChat</h2>
+        </div>
+        <ul class="menu">
+            <li class="menu-item">
+                <a href="{% url 'core:admin_dashboard' %}" class="menu-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            {% comment %} <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Conversations</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Statistiques</span>
+                </a>
+            </li> {% endcomment %}
+            <li class="menu-item">
+                <a href="{% url 'core:resources_list' %}" class="menu-link active">
+                    <i class="fas fa-book-medical"></i>
+                    <span>Ressources</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Paramètres</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{% url 'accounts:logout' %}" class="menu-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
