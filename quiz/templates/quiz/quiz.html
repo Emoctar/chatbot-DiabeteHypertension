@@ -1055,7 +1055,7 @@
                 // Génération du résumé des 5 premières questions
                 const summaryContainer = document.getElementById(`${type}-summary`);
                 summaryContainer.innerHTML = '';
-                const questionsToShow = Math.min(5, selectedQuestions[type].length);
+                const questionsToShow = Math.min(10, selectedQuestions[type].length);
 
                 for (let i = 0; i < questionsToShow; i++) {
                     const question = selectedQuestions[type][i];

@@ -1302,24 +1302,38 @@
         return '';
     }
 
-    // Mobile Menu Toggle
-    const menuToggleBtn = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar');
+    // For mobile toggle menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create menu toggle button for mobile
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(menuToggle);
 
-    if (menuToggleBtn && sidebar) {
-        menuToggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 576) {
-                if (!sidebar.contains(e.target) && e.target !== menuToggleBtn) {
-                    sidebar.classList.remove('active');
+            menuToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+
+                if (sidebar.classList.contains('active')) {
+                    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
                 }
-            }
+            });
+
+            // Hide sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.querySelector('.sidebar');
+                const menuToggle = document.querySelector('.menu-toggle');
+
+                if (sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
+                    !menuToggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
         });
-    }
 
     // Gestion des filtres avec actualisation en temps réel (optionnel)
     const categoryFilter = document.getElementById('categoryFilter');

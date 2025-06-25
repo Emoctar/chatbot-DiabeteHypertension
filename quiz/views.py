@@ -15,12 +15,6 @@ def autoevaluation(request):
     return render(request, 'quiz/autoevaluation.html')
 
 
-
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import json
-from .models import QuizSubmission
-
 @require_POST
 def submit_score(request):
     data = json.loads(request.body)

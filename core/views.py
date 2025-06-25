@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 import mimetypes
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 import os
 import logging
+
+from accounts.models import User
+from chatbot.models import Conversation, Message
 
 from .models import Resource
 from .forms import ResourceForm
@@ -36,10 +40,100 @@ def ressources(request):
 
 
 # Admin
+
+
 def admin_dashboard(request):
-    return render(request, 'admin/dashboard.html')
+    """Vue pour le tableau de bord administrateur avec widget Questions Récentes"""
+    
+    # Statistiques de base
+    stats = {
+        'users_count': User.objects.filter(user_type='member').count(),
+        'conversations_count': Conversation.objects.count(),
+        'messages_count': Message.objects.count(),
+        
+        'stats_display': {
+            'conversations': {
+                'value': Conversation.objects.count(),
+                'label': 'Conversations',
+                'icon': 'fas fa-comments',
+                'card_class': 'primary'
+            },
+            'users': {
+                'value': User.objects.filter(user_type='member').count(),
+                'label': 'Utilisateurs', 
+                'icon': 'fas fa-users',
+                'card_class': 'secondary'
+            },
+            'messages': {
+                'value': Message.objects.count(),
+                'label': 'Messages',
+                'icon': 'fas fa-envelope',
+                'card_class': 'accent'
+            }
+        }
+    }
+    
+    # Données pour le graphique d'activité (7 derniers jours)
+    today = datetime.now(timezone.utc).date()
+    activity_data = []
+    labels = []
+    
+    for i in range(6, -1, -1):
+        date = today - timedelta(days=i)
+        interactions_count = Message.objects.filter(
+            role='user',
+            created_at__date=date
+        ).count()
+        activity_data.append(interactions_count)
+        day_names = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+        labels.append(day_names[date.weekday()])
+    
+    chart_data = {
+        'labels': labels,
+        'data': activity_data
+    }
+    
+    # Questions récentes (derniers messages utilisateur)
+    recent_questions = Message.objects.filter(
+        role='user'
+    ).select_related('conversation', 'conversation__user').order_by('-created_at')[:10]
+    
+    # Formatage des questions récentes pour l'affichage
+    formatted_questions = []
+    for message in recent_questions:
+        formatted_questions.append({
+            'content': message.content[:80] + '...' if len(message.content) > 80 else message.content,
+            'user': message.conversation.user.username if hasattr(message.conversation.user, 'username') else f"User {message.conversation.user.id}",
+            'time_ago': get_time_ago(message.created_at),
+            'conversation_id': message.conversation.id,
+            'full_content': message.content
+        })
+    
+    context = {
+        'stats': stats,
+        'stats_display': stats['stats_display'],
+        'chart_data': chart_data,
+        'recent_questions': formatted_questions
+    }
+    
+    return render(request, 'admin/dashboard.html', context)
 
 
+def get_time_ago(datetime_obj):
+    """Fonction utilitaire pour calculer le temps écoulé"""
+    now = datetime.now(timezone.utc)
+    diff = now - datetime_obj
+    
+    if diff.days > 0:
+        return f"il y a {diff.days} jour{'s' if diff.days > 1 else ''}"
+    elif diff.seconds > 3600:
+        hours = diff.seconds // 3600
+        return f"il y a {hours} heure{'s' if hours > 1 else ''}"
+    elif diff.seconds > 60:
+        minutes = diff.seconds // 60
+        return f"il y a {minutes} minute{'s' if minutes > 1 else ''}"
+    else:
+        return "à l'instant"
 def admin_ressources(request):
     return render(request, 'admin/ressources.html')
 
