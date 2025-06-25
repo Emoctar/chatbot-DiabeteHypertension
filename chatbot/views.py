@@ -31,9 +31,10 @@ def conversation_view(request, conversation_id):
     messages = current_conversation.messages.all().order_by('created_at')  # Ordre chronologique
     return render(request, 'chat_interface.html', {
         'current_conversation': current_conversation,  # Renommé pour éviter la confusion
-        'messages': messages,
+        'chat_messages': messages,
         'conversations': conversations  # Liste de toutes les conversations pour la sidebar
     })
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_conversation(request):
@@ -81,36 +82,31 @@ def send_message(request, conversation_id):
         # Récupérer l'historique des messages
         messages = conversation.messages.all().order_by('created_at')
         
-        # Obtenir une réponse du LLM
+        # Obtenir une réponse du LLM (Gemini)
         llm_service = LLMService()
-        system_message = """Tu es un assistant virtuel spécialisé exclusivement dans le diabète et l’hypertension.
-Ta mission est d’informer et d’éduquer les utilisateurs sur ces deux maladies chroniques, en fournissant uniquement des informations générales, factuelles, à visée éducative.
+        system_message = """Tu es un assistant virtuel spécialisé exclusivement dans le diabète et l'hypertension.
+Ta mission est d'informer et d'éduquer les utilisateurs sur ces deux maladies chroniques, en fournissant uniquement des informations générales, factuelles, à visée éducative.
+
 Tu dois toujours :
-
-Rester limité aux sujets liés au diabète et à l'hypertension (symptômes, prévention, traitements, alimentation, activité physique, complications, suivi médical, etc.).
-
-Refuser de répondre à toute question ne concernant pas l’un de ces deux sujets.
-
-Ne jamais poser de diagnostic ni donner de traitement personnalisé.
-
-Encourager systématiquement les utilisateurs à consulter un professionnel de santé pour toute décision médicale ou doute personnel.
-
-T’appuyer uniquement sur des sources médicales fiables telles que :
-
-Organisation mondiale de la santé (OMS)
-
-Fédération Internationale du Diabète (IDF)
-
-Haute Autorité de Santé (HAS)
-
-American Heart Association (AHA)
-
-Société Francophone du Diabète (SFD)
-
-Expliquer les choses de manière claire, simple et accessible, même pour des personnes non spécialistes ou avec un faible niveau d’alphabétisation."""
+- Rester limité aux sujets liés au diabète et à l'hypertension (symptômes, prévention, traitements, alimentation, activité physique, complications, suivi médical, etc.).
+- Refuser poliment de répondre à toute question ne concernant pas l'un de ces deux sujets.
+- Ne jamais poser de diagnostic ni donner de traitement personnalisé.
+- Encourager systématiquement les utilisateurs à consulter un professionnel de santé pour toute décision médicale ou doute personnel.
+- T'appuyer uniquement sur des sources médicales fiables telles que :
+  * Organisation mondiale de la santé (OMS)
+  * Fédération Internationale du Diabète (IDF)
+  * Haute Autorité de Santé (HAS)
+  * American Heart Association (AHA)
+  * Société Francophone du Diabète (SFD)
+- Expliquer les choses de manière claire, simple et accessible, même pour des personnes non spécialistes.
+- Répondre en français de manière bienveillante et professionnelle."""
         
         try:
             response = llm_service.get_completion(messages, system_message)
+            
+            # Vérifier que la réponse n'est pas vide
+            if not response or response.strip() == "":
+                response = "Je suis désolé, je n'ai pas pu générer une réponse appropriée. Pouvez-vous reformuler votre question sur le diabète ou l'hypertension ?"
             
             # Enregistrer la réponse de l'assistant
             assistant_message = Message.objects.create(
@@ -124,13 +120,28 @@ Expliquer les choses de manière claire, simple et accessible, même pour des pe
             
             return Response({
                 'message': assistant_message.content,
-                'timestamp': assistant_message.created_at.isoformat()
+                'timestamp': assistant_message.created_at.isoformat(),
+                'model_used': 'gemini'  # Ajout pour tracking
             })
         
         except Exception as e:
-            print(f"Erreur LLM: {str(e)}")
-            return Response({'error': 'Erreur lors de la génération de la réponse'}, status=500)
+            print(f"Erreur LLM Gemini: {str(e)}")
+            
+            # En cas d'erreur, essayer de donner une réponse de fallback
+            fallback_response = "Je rencontre actuellement des difficultés techniques. Veuillez réessayer dans quelques instants. En attendant, n'hésitez pas à consulter un professionnel de santé pour toute question urgente concernant votre diabète ou votre hypertension."
+            
+            assistant_message = Message.objects.create(
+                conversation=conversation,
+                role='assistant',
+                content=fallback_response
+            )
+            
+            return Response({
+                'message': assistant_message.content,
+                'timestamp': assistant_message.created_at.isoformat(),
+                'error': 'Erreur LLM - Réponse de fallback utilisée'
+            }, status=200)  # On retourne 200 car on a quand même une réponse
     
     except Exception as e:
         print(f"Erreur générale: {str(e)}")
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': 'Une erreur inattendue s\'est produite'}, status=500)

@@ -26,6 +26,7 @@ def get_admin_stats():
     }
 
 
+
 # Vue de connexion (basée sur une classe)
 
 class LoginView(FormView):
@@ -57,7 +58,7 @@ class LoginView(FormView):
                 # qu'elle expire quand le navigateur est fermé
                 self.request.session.set_expiry(0)
                 
-            messages.success(self.request, f"Bienvenue, {user.username} !")
+            messages.success(self.request, f"Bienvenue, {user.get_full_name()} !")
 
             # Redirige vers la page appropriée selon le type d'utilisateur
             return redirect(user.get_redirect_url())
@@ -77,14 +78,13 @@ class RegisterView(FormView):
     success_url = reverse_lazy('chatbot:chatbot_interface')
 
     def form_valid(self, form):
-        # Enregistre l'utilisateur
         user = form.save()
 
-        # Connecte automatiquement l'utilisateur après l'inscription
-        login(self.request, user)
-
-        messages.success(self.request, "Inscription réussie ! Bienvenue sur notre plateforme.")
-        return super().form_valid(form)
+        # Message unique pour SweetAlert
+        messages.success(self.request, "registration_success")
+        
+        # Redirection vers la page de connexion
+        return redirect('accounts:login')
 
 
 # Vue de déconnexion

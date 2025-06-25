@@ -1,3 +1,6 @@
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -116,15 +119,15 @@
     {% include 'partials/header.html' %}
 
     <!-- Hero Section -->
-    <section class="hero-section pt-28 pb-16 md:py-32" style="background-image: url('https://readdy.ai/api/search-image?query=A%20modern%20medical%20illustration%20showing%20a%20doctor%20or%20healthcare%20professional%20interacting%20with%20a%20digital%20health%20interface%2C%20with%20soft%20blue%20gradient%20on%20the%20left%20side%20fading%20into%20a%20clean%20medical%20themed%20illustration%20on%20the%20right.%20The%20left%20side%20should%20have%20ample%20space%20for%20text%20with%20a%20light%20blue%20background%20that%20perfectly%20blends%20with%20the%20illustration.%20The%20overall%20style%20should%20be%20professional%2C%20reassuring%2C%20and%20modern%20with%20medical%20symbols%20subtly%20integrated.&width=1600&height=800&seq=hero123&orientation=landscape');">
+    <section class="hero-section pt-28 pb-16 md:py-32" style="background-image: url('{% static 'img/womencare.jpg' %}');">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="hero-content w-full md:w-1/2 mb-10 md:mb-0">
                     <h1 class="font-poppins text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">Votre assistant santé pour le diabète et l'hypertension</h1>
                     <p class="text-lg md:text-xl text-gray-700 mb-8">Obtenez des informations fiables et personnalisées sur le diabète et l'hypertension grâce à notre assistant intelligent disponible 24/7.</p>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button class="font-poppins bg-secondary text-white px-6 py-3 !rounded-button whitespace-nowrap hover:bg-secondary/90 transition-colors font-medium text-lg">Poser une question maintenant</button>
-                        <button class="font-poppins border border-primary text-primary px-6 py-3 !rounded-button whitespace-nowrap hover:bg-primary/5 transition-colors font-medium text-lg">En savoir plus</button>
+                        <a href="{% url 'accounts:login' %}" class="font-poppins bg-secondary text-white px-6 py-3 !rounded-button whitespace-nowrap hover:bg-secondary/90 transition-colors font-medium text-lg">Poser une question maintenant</a>
+                        <a href="{% url 'core:apropos' %}" class="font-poppins border border-primary text-primary px-6 py-3 !rounded-button whitespace-nowrap hover:bg-primary/5 transition-colors font-medium text-lg">En savoir plus</a>
                     </div>
                 </div>
                 <div class="w-full md:w-1/2">
@@ -379,7 +382,7 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-16 md:py-24 bg-white">
+    <section class="py-16 md:py-24 bg-white faq-section">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-4">Questions fréquentes</h2>
@@ -402,8 +405,8 @@
                         <h3 class="font-poppins font-medium text-gray-900">Comment SantéChat protège-t-il mes données personnelles ?</h3>
                         <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
                     </button>
-                    <div class="hidden">
-                        <p class="text-gray-700 p-4">Nous prenons la protection de vos données très au sérieux. Toutes les informations que vous partagez sont cryptées et nous ne les utilisons que pour améliorer nos réponses. Nous ne partageons jamais vos données avec des tiers sans votre consentement explicite.</p>
+                    <div class="hidden p-4 bg-white border border-gray-100 rounded-b-lg mt-1">
+                        <p class="text-gray-700">Nous prenons la protection de vos données très au sérieux. Toutes les informations que vous partagez sont cryptées et nous ne les utilisons que pour améliorer nos réponses. Nous ne partageons jamais vos données avec des tiers sans votre consentement explicite.</p>
                     </div>
                 </div>
 
@@ -412,8 +415,8 @@
                         <h3 class="font-poppins font-medium text-gray-900">SantéChat est-il gratuit ?</h3>
                         <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
                     </button>
-                    <div class="hidden">
-                        <p class="text-gray-700 p-4">SantéChat propose une version gratuite qui donne accès à des informations générales sur le diabète et l'hypertension. Nous proposons également une version premium avec des fonctionnalités avancées, comme des réponses plus détaillées et la possibilité de poser des questions illimitées.</p>
+                    <div class="hidden p-4 bg-white border border-gray-100 rounded-b-lg mt-1">
+                        <p class="text-gray-700">SantéChat propose une version gratuite qui donne accès à des informations générales sur le diabète et l'hypertension. Nous proposons également une version premium avec des fonctionnalités avancées, comme des réponses plus détaillées et la possibilité de poser des questions illimitées.</p>
                     </div>
                 </div>
 
@@ -422,8 +425,8 @@
                         <h3 class="font-poppins font-medium text-gray-900">Puis-je utiliser SantéChat pour gérer mon traitement ?</h3>
                         <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
                     </button>
-                    <div class="hidden">
-                        <p class="text-gray-700 p-4">SantéChat fournit des informations générales sur les traitements du diabète et de l'hypertension, mais ne peut pas remplacer les conseils spécifiques de votre médecin. Nous vous recommandons toujours de suivre les instructions de votre professionnel de santé concernant votre traitement.</p>
+                    <div class="hidden p-4 bg-white border border-gray-100 rounded-b-lg mt-1">
+                        <p class="text-gray-700">SantéChat fournit des informations générales sur les traitements du diabète et de l'hypertension, mais ne peut pas remplacer les conseils spécifiques de votre médecin. Nous vous recommandons toujours de suivre les instructions de votre professionnel de santé concernant votre traitement.</p>
                     </div>
                 </div>
 
@@ -432,8 +435,8 @@
                         <h3 class="font-poppins font-medium text-gray-900">Comment puis-je contacter le support si j'ai un problème ?</h3>
                         <i class="ri-arrow-down-s-line ri-lg text-primary"></i>
                     </button>
-                    <div class="hidden">
-                        <p class="text-gray-700 p-4">Vous pouvez contacter notre équipe de support via le formulaire de contact sur notre site web, ou en envoyant un email à support@santechat.fr. Nous nous efforçons de répondre à toutes les demandes dans un délai de 24 heures.</p>
+                    <div class="hidden p-4 bg-white border border-gray-100 rounded-b-lg mt-1">
+                        <p class="text-gray-700">Vous pouvez contacter notre équipe de support via le formulaire de contact sur notre site web, ou en envoyant un email à support@santechat.fr. Nous nous efforçons de répondre à toutes les demandes dans un délai de 24 heures.</p>
                     </div>
                 </div>
             </div>

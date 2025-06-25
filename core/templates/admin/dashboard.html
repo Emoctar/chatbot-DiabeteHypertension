@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Santé Diabète & Hypertension</title>
+    <title>SantéChat</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -12,12 +12,14 @@
             --primary: #1A5F7A;
             --secondary: #4ECDC4;
             --accent: #FF9F1C;
+            --success: #28a745;
             --white: #FFFFFF;
             --light-gray: #F5F6FA;
             --text-dark: #333333;
             --text-light: #777777;
             --border-radius: 8px;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.08);
         }
 
         * {
@@ -39,6 +41,7 @@
             font-weight: 600;
         }
 
+        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             background-color: var(--primary);
@@ -108,6 +111,7 @@
             text-align: center;
         }
 
+        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: 250px;
@@ -115,6 +119,7 @@
             transition: all 0.3s ease;
         }
 
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -192,70 +197,42 @@
             object-fit: cover;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .widget {
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .widget:hover {
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .widget-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .widget-title {
-            font-size: 1.1rem;
-            color: var(--text-dark);
-            margin: 0;
-        }
-
-        .widget-action {
-            color: var(--text-light);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .stat-card {
             background-color: var(--white);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            padding: 1rem;
+            padding: 1.5rem;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
         }
 
         .stat-card.primary {
-            border-top: 3px solid var(--primary);
+            border-top: 4px solid var(--primary);
         }
 
         .stat-card.secondary {
-            border-top: 3px solid var(--secondary);
+            border-top: 4px solid var(--secondary);
         }
 
         .stat-card.accent {
-            border-top: 3px solid var(--accent);
+            border-top: 4px solid var(--accent);
+        }
+
+        .stat-card.success {
+            border-top: 4px solid var(--success);
         }
 
         .stat-icon {
@@ -283,6 +260,11 @@
             color: var(--accent);
         }
 
+        .stat-icon.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
         .stat-value {
             font-size: 1.75rem;
             font-weight: 600;
@@ -295,194 +277,228 @@
             font-size: 0.875rem;
         }
 
-        .chart-container {
-            position: relative;
-            min-height: 250px;
+        /* Dashboard Grid for Charts */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
+        /* Widget Styles */
+        .widget {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .widget:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .widget-title {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .widget-action {
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .widget-action:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Chart Container - Optimisé pour Chart.js */
+        .chart-container {
+            position: relative;
+            flex: 1;
+            min-height: 250px;
+            max-height: 400px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-container canvas {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
+        /* Styles spécifiques pour différents types de graphiques */
+        .chart-container.line-chart,
+        .chart-container.bar-chart {
+            min-height: 300px;
+        }
+
+        .chart-container.pie-chart,
+        .chart-container.doughnut-chart {
+            min-height: 280px;
+            max-height: 350px;
+        }
+
+        .chart-container.horizontal-bar {
+            min-height: 350px;
+        }
+
+        /* Widget spécialisés */
+        .widget.large {
+            grid-column: span 2;
+            min-height: 400px;
+        }
+
+        .widget.small {
+            min-height: 280px;
+        }
+
+        /* Questions récentes */
         .recent-questions {
             margin-top: 1rem;
+            flex: 1;
+        }
+
+        .recent-questions-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .recent-questions-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .recent-questions-list::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 3px;
+        }
+
+        .recent-questions-list::-webkit-scrollbar-thumb {
+            background: var(--text-light);
+            border-radius: 3px;
         }
 
         .question-item {
             display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--light-gray);
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        .question-item:hover {
+            background-color: #f8f9fa;
         }
 
         .question-item:last-child {
             border-bottom: none;
         }
 
-        .question-category {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 0.75rem;
-        }
-
-        .question-category.diabetes {
-            background-color: var(--primary);
-        }
-
-        .question-category.hypertension {
-            background-color: var(--secondary);
-        }
-
-        .question-category.general {
-            background-color: var(--accent);
+        .question-content {
+            flex: 1;
+            margin-right: 10px;
         }
 
         .question-text {
-            flex: 1;
-            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
         }
 
         .question-meta {
-            color: var(--text-light);
-            font-size: 0.875rem;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .status.answered {
-            background-color: rgba(78, 205, 196, 0.1);
-            color: var(--secondary);
-        }
-
-        .status.pending {
-            background-color: rgba(255, 159, 28, 0.1);
-            color: var(--accent);
-        }
-
-        .resource-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .resource-card {
             display: flex;
-            flex-direction: column;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            gap: 15px;
+            font-size: 12px;
+            color: #666;
         }
 
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .resource-image {
-            height: 130px;
-            background-color: var(--light-gray);
+        .question-meta span {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
 
-        .resource-image i {
-            font-size: 2.5rem;
-            color: var(--primary);
-        }
-
-        .resource-details {
-            padding: 1rem;
-            background-color: var(--white);
-        }
-
-        .resource-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .resource-meta {
+        .question-actions {
             display: flex;
-            justify-content: space-between;
-            color: var(--text-light);
-            font-size: 0.875rem;
-        }
-
-        .resource-views {
-            display: flex;
-            align-items: center;
-        }
-
-        .resource-views i {
-            margin-right: 0.25rem;
-        }
-
-        .quick-actions {
-            display: flex;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 5px;
+            flex-shrink: 0;
         }
 
         .action-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            flex: 1;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            font-size: 12px;
+            transition: all 0.2s;
         }
 
-        .action-btn.primary {
-            background-color: var(--primary);
-            color: var(--white);
+        .action-btn.view {
+            background-color: #e3f2fd;
+            color: #1976d2;
         }
 
-        .action-btn.secondary {
-            background-color: var(--secondary);
-            color: var(--white);
+        .action-btn.view:hover {
+            background-color: #bbdefb;
         }
 
-        .action-btn.accent {
-            background-color: var(--accent);
-            color: var(--white);
+        .action-btn.delete {
+            background-color: #ffebee;
+            color: #d32f2f;
         }
 
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        .action-btn.delete:hover {
+            background-color: #ffcdd2;
         }
 
-        .action-btn i {
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .col-span-2 {
-            grid-column: span 2;
-        }
-
-        .col-span-3 {
-            grid-column: span 3;
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+            
+            .widget.large {
+                grid-column: span 1;
+            }
         }
 
         @media (max-width: 1200px) {
-            .col-span-2, .col-span-3 {
-                grid-column: auto;
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
@@ -518,7 +534,11 @@
             }
 
             .dashboard-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                min-height: 200px;
             }
         }
 
@@ -526,24 +546,25 @@
             .header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 1rem;
             }
 
             .search-bar {
                 width: 100%;
                 max-width: none;
-                margin-bottom: 1rem;
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             }
-
-            .quick-actions {
-                flex-direction: column;
+            
+            .widget {
+                min-height: 300px;
+                padding: 1rem;
             }
-
-            .resource-list {
-                grid-template-columns: 1fr;
+            
+            .chart-container {
+                min-height: 180px;
             }
         }
 
@@ -589,228 +610,335 @@
             .header {
                 margin-top: 3rem;
             }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                gap: 1rem;
+            }
+            
+            .widget {
+                min-height: 250px;
+                padding: 0.75rem;
+            }
+            
+            .chart-container {
+                min-height: 150px;
+            }
+        }
+
+        /* Loading state pour les graphiques */
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .chart-loading::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--light-gray);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Amélioration de l'accessibilité */
+        .widget:focus-within {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .action-btn:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 1px;
+        }
+
+        /* Styles pour les tooltips Chart.js */
+        .chartjs-tooltip {
+            opacity: 1;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 3px;
+            -webkit-transition: all .1s ease;
+            transition: all .1s ease;
+            pointer-events: none;
+            -webkit-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
         }
     </style>
 </head>
 <body>
+    
     <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-logo">
-            <i class="fas fa-heartbeat" style="font-size: 1.75rem;"></i>
-            <h2>MediChat</h2>
-        </div>
-        <ul class="menu">
-            <li class="menu-item">
-                <a href="#" class="menu-link active">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Tableau de bord</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <i class="fas fa-comments"></i>
-                    <span>Conversations</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <i class="fas fa-chart-pie"></i>
-                    <span>Statistiques</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <i class="fas fa-book-medical"></i>
-                    <span>Ressources</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <i class="fas fa-cog"></i>
-                    <span>Paramètres</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    {% include 'partials/admin/sidebar.html' %}
+    {% include "partials/sweetAlert/loginLogout.html" %}
 
     <!-- Main Content -->
     <main class="main-content">
         <!-- Header -->
         <header class="header">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Rechercher...">
+            <div >
+                <h3>Tableau de Bord</h3>
             </div>
-            <div class="user-actions">
-                <button class="notification-btn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-count">3</span>
-                </button>
-                <button class="profile-btn">
-                    <img src="/api/placeholder/50/50" alt="Profile">
-                </button>
-            </div>
+
         </header>
 
-        <!-- Dashboard Content -->
-        <div class="dashboard-grid">
-            <!-- Stats Cards -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Statistiques Rapides</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card primary">
-                        <div class="stat-icon primary">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <div class="stat-value">1,258</div>
-                        <div class="stat-label">Conversations</div>
-                    </div>
-                    <div class="stat-card secondary">
-                        <div class="stat-icon secondary">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <div class="stat-value">452</div>
-                        <div class="stat-label">Questions fréquentes</div>
-                    </div>
-                    <div class="stat-card accent">
-                        <div class="stat-icon accent">
-                            <i class="fas fa-smile"></i>
-                        </div>
-                        <div class="stat-value">94%</div>
-                        <div class="stat-label">Taux de satisfaction</div>
-                    </div>
-                </div>
-            </div>
+    
+        
 
-            <!-- Activity Chart -->
-            <div class="widget col-span-2">
-                <div class="widget-header">
-                    <h3 class="widget-title">Activité du Chatbot</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon primary">
+                    <i class="fas fa-comments"></i>
                 </div>
-                <div class="chart-container">
-                    <canvas id="activityChart"></canvas>
-                </div>
+                <div class="stat-value">{{ stats_display.conversations.value }}</div>
+                <div class="stat-label">{{ stats_display.conversations.label }}</div>
             </div>
-
-            <!-- Recent Questions -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Questions Récentes</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
+            <div class="stat-card secondary">
+                <div class="stat-icon secondary">
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="recent-questions">
-                    <div class="question-item">
-                        <div class="question-category diabetes"></div>
-                        <div class="question-text">Comment contrôler ma glycémie ?</div>
-                        <span class="status answered">Répondu</span>
-                    </div>
-                    <div class="question-item">
-                        <div class="question-category hypertension"></div>
-                        <div class="question-text">Alimentation pour l'hypertension</div>
-                        <span class="status answered">Répondu</span>
-                    </div>
-                    <div class="question-item">
-                        <div class="question-category general"></div>
-                        <div class="question-text">Exercices recommandés</div>
-                        <span class="status pending">En attente</span>
-                    </div>
-                    <div class="question-item">
-                        <div class="question-category diabetes"></div>
-                        <div class="question-text">Symptômes d'hypoglycémie</div>
-                        <span class="status answered">Répondu</span>
-                    </div>
-                    <div class="question-item">
-                        <div class="question-category hypertension"></div>
-                        <div class="question-text">Médicaments contre l'hypertension</div>
-                        <span class="status pending">En attente</span>
-                    </div>
-                </div>
+                <div class="stat-value">{{ stats_display.users.value }}</div>
+                <div class="stat-label">{{ stats_display.users.label }}</div>
             </div>
-
-            <!-- Popular Resources -->
-            <div class="widget col-span-2">
-                <div class="widget-header">
-                    <h3 class="widget-title">Ressources Populaires</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
+            <div class="stat-card accent">
+                <div class="stat-icon accent">
+                    <i class="fas fa-envelope"></i>
                 </div>
-                <div class="resource-list">
-                    <div class="resource-card">
-                        <div class="resource-image">
-                            <i class="fas fa-file-medical"></i>
-                        </div>
-                        <div class="resource-details">
-                            <h4 class="resource-title">Guide de l'alimentation pour diabétiques</h4>
-                            <div class="resource-meta">
-                                <span class="resource-type">PDF</span>
-                                <span class="resource-views">
-                                    <i class="fas fa-eye"></i> 1.2k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-image">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="resource-details">
-                            <h4 class="resource-title">Vidéo : Mesurer sa tension artérielle</h4>
-                            <div class="resource-meta">
-                                <span class="resource-type">Vidéo</span>
-                                <span class="resource-views">
-                                    <i class="fas fa-eye"></i> 876
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="resource-card">
-                        <div class="resource-image">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <div class="resource-details">
-                            <h4 class="resource-title">Checklist quotidienne</h4>
-                            <div class="resource-meta">
-                                <span class="resource-type">PDF</span>
-                                <span class="resource-views">
-                                    <i class="fas fa-eye"></i> 643
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-value">{{ stats_display.messages.value }}</div>
+                <div class="stat-label">{{ stats_display.messages.label }}</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon success">
+                    <i class="fas fa-chart-line"></i>
                 </div>
+                <div class="stat-value">{{ stats_display.avg_messages.value }}</div>
+                <div class="stat-label">{{ stats_display.avg_messages.label }}</div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <button class="action-btn primary">
-                <i class="fas fa-plus"></i>
-                Nouvelle Conversation
-            </button>
-            <button class="action-btn secondary">
-                <i class="fas fa-book-open"></i>
-                Explorer les Ressources
-            </button>
-            <button class="action-btn accent">
-                <i class="fas fa-chart-bar"></i>
-                Voir les Statistiques
-            </button>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Activité quotidienne -->
+            <div class="widget">
+                {% comment %} <div class="widget-header">
+                    <h3 class="widget-title">Activité quotidienne (7 derniers jours)</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container line-chart">
+                    <canvas id="activityChart"></canvas>
+                </div> {% endcomment %}
+            </div>
+
+            <!-- Répartition par catégorie -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Questions par catégorie</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container pie-chart">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Activité par heure -->
+            <div class="widget large">
+                    <div class="widget-header">
+                        <h3 class="widget-title">Activité du Chatbot</h3>
+                        <button class="widget-action">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+            <!-- Évolution mensuelle -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Utilisateurs actifs (6 mois)</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container line-chart">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top utilisateurs -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Top 10 utilisateurs actifs</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container horizontal-bar">
+                    <canvas id="topUsersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Durée des conversations -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Durée des conversations</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container doughnut-chart">
+                    <canvas id="durationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Taux de satisfaction -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h3 class="widget-title">Sentiment des messages</h3>
+                    <button class="widget-action">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="chart-container pie-chart">
+                    <canvas id="satisfactionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Questions récentes -->
+             <!-- Recent Questions Widget -->
+        <div class="widget">
+            <div class="widget-header">
+                <h3 class="widget-title">Questions Récentes</h3>
+                <button class="widget-action">
+                    <i class="fas fa-refresh"></i>
+                </button>
+            </div>
+            <div class="recent-questions-list">
+                {% for question in recent_questions %}
+                <div class="question-item">
+                    <div class="question-content">
+                        <p class="question-text">{{ question.content }}</p>
+                        <div class="question-meta">
+                            <span class="user-name">
+                                <i class="fas fa-user"></i>
+                                {{ question.user }}
+                            </span>
+                            <span class="question-time">
+                                <i class="fas fa-clock"></i>
+                                {{ question.time_ago }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="question-actions">
+                        {% comment %} <button class="action-btn view-btn" onclick="viewConversation({{ question.conversation_id }})">
+                            <i class="fas fa-eye"></i>
+                        </button> {% endcomment %}
+                        <button class="action-btn details-btn" onclick="showDetails('{{ question.full_content|escapejs }}')">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="no-questions">
+                    <i class="fas fa-question-circle"></i>
+                    <p>Aucune question récente</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
         </div>
     </main>
 
     <script>
-        // Activity Chart
+        // Configuration globale pour Chart.js
+        Chart.defaults.font.family = "'Open Sans', sans-serif";
+        Chart.defaults.color = '#777777';
+        Chart.defaults.responsive = true;
+        Chart.defaults.maintainAspectRatio = false;
+
+        // Fonction pour créer les graphiques avec gestion d'erreur
+        function createChart(canvasId, config) {
+            try {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) {
+                    console.error(`Canvas avec l'ID ${canvasId} non trouvé`);
+                    return null;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                return new Chart(ctx, config);
+            } catch (error) {
+                console.error(`Erreur lors de la création du graphique ${canvasId}:`, error);
+                return null;
+            }
+        }
+
+        // Fonction pour redimensionner les graphiques
+        function resizeCharts() {
+            Chart.helpers.each(Chart.instances, function(instance) {
+                instance.resize();
+            });
+        }
+
+        // Écouteur pour le redimensionnement
+        window.addEventListener('resize', function() {
+            setTimeout(resizeCharts, 100);
+        });
+
+        // For mobile toggle menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create menu toggle button for mobile
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(menuToggle);
+
+            menuToggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('active');
+
+                if (sidebar.classList.contains('active')) {
+                    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+
+            // Hide sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.querySelector('.sidebar');
+                const menuToggle = document.querySelector('.menu-toggle');
+
+                if (sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
+                    !menuToggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('activityChart').getContext('2d');
 
@@ -818,13 +946,17 @@
             gradient.addColorStop(0, 'rgba(78, 205, 196, 0.5)');
             gradient.addColorStop(1, 'rgba(78, 205, 196, 0.0)');
 
+            // Récupération des données depuis Django
+            const chartLabels = {{ chart_data.labels|safe }};
+            const chartData = {{ chart_data.data|safe }};
+
             const activityChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                    labels: chartLabels,
                     datasets: [{
                         label: 'Interactions',
-                        data: [65, 78, 52, 91, 43, 29, 47],
+                        data: chartData,
                         backgroundColor: gradient,
                         borderColor: '#4ECDC4',
                         borderWidth: 2,
@@ -878,39 +1010,20 @@
                 }
             });
         });
+        
+          function showDetails(fullContent) {
+            // Afficher le contenu complet dans une modal ou alert
+            alert(fullContent);
+            // Ou utiliser une modal plus élégante :
+            // showModal('Détails de la question', fullContent);
+        }
 
-        // For mobile toggle menu
-        document.addEventListener('DOMContentLoaded', function() {
-            // Create menu toggle button for mobile
-            const menuToggle = document.createElement('button');
-            menuToggle.className = 'menu-toggle';
-            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            document.body.appendChild(menuToggle);
+       
 
-            menuToggle.addEventListener('click', function() {
-                const sidebar = document.querySelector('.sidebar');
-                sidebar.classList.toggle('active');
-
-                if (sidebar.classList.contains('active')) {
-                    menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-                } else {
-                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-            });
-
-            // Hide sidebar when clicking outside on mobile
-            document.addEventListener('click', function(event) {
-                const sidebar = document.querySelector('.sidebar');
-                const menuToggle = document.querySelector('.menu-toggle');
-
-                if (sidebar.classList.contains('active') &&
-                    !sidebar.contains(event.target) &&
-                    !menuToggle.contains(event.target)) {
-                    sidebar.classList.remove('active');
-                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                }
-            });
-        });
+            // Redimensionner les graphiques après l'initialisation
+            setTimeout(resizeCharts, 100);
+    
     </script>
 </body>
 </html>
+
