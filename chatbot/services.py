@@ -156,7 +156,6 @@ def _get_mock_response(messages: List[Message]) -> str:
     else:
         return "Je suis votre assistant santé spécialisé dans le diabète et l'hypertension. Je peux vous fournir des informations générales sur ces conditions, leurs symptômes, les traitements disponibles et les recommandations de mode de vie. N'hésitez pas à me poser une question spécifique. N'oubliez pas que je ne remplace pas l'avis d'un professionnel de santé."
 
-
 class LLMService:
     """
     Service pour gérer les interactions avec Google Gemini.
@@ -193,9 +192,10 @@ class LLMService:
         formatted_prompt += "\nAssistant:"
         return formatted_prompt
     
-    def get_completion(self, messages, system_message):
+    def get_completion(self, messages, system_message, skip_keyword_check=False):
         """
         Obtient une réponse de Gemini ou utilise le mode mock.
+        skip_keyword_check: Si True, ne vérifie pas les mots-clés (utile pour la génération de titres)
         """
         # Si pas de clé API, utiliser le mode mock
         if not self.api_key or not self.model:
@@ -247,15 +247,17 @@ class LLMService:
             assistant_reply = response.text.strip()
             
             # Vérifier si la réponse reste dans le domaine diabète / hypertension
-            allowed_keywords = [
-                'diabète', 'hypertension', 'glycémie', 'insuline', 'tension artérielle',
-                'glucose', 'traitement', 'HAS', 'OMS', 'IDF', 'AHA', 'SFD', 'régime', 
-                'activité physique', 'sucre', 'sang', 'médecin', 'santé'
-            ]
+            # SAUF si on génère un titre (skip_keyword_check=True)
+            if not skip_keyword_check:
+                allowed_keywords = [
+                    'diabète', 'hypertension', 'glycémie', 'insuline', 'tension artérielle',
+                    'glucose', 'traitement', 'HAS', 'OMS', 'IDF', 'AHA', 'SFD', 'régime', 
+                    'activité physique', 'sucre', 'sang', 'médecin', 'santé'
+                ]
 
-            if not any(keyword in assistant_reply.lower() for keyword in allowed_keywords):
-                return ("Je suis désolé, je suis un assistant spécialisé uniquement dans le diabète et l'hypertension. "
-                        "Merci de poser une question en rapport avec ces sujets.")
+                if not any(keyword in assistant_reply.lower() for keyword in allowed_keywords):
+                    return ("Je suis désolé, je suis un assistant spécialisé uniquement dans le diabète et l'hypertension. "
+                            "Merci de poser une question en rapport avec ces sujets.")
 
             return assistant_reply
             

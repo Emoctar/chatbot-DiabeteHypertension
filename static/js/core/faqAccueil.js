@@ -1,5 +1,4 @@
-
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
             // FAQ Accordion
             const faqButtons = document.querySelectorAll('.faq-section button');
             faqButtons.forEach(button => {

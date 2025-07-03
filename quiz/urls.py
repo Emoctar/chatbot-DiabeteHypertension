@@ -9,7 +9,7 @@ urlpatterns = [
     # Endpoint to submit the score
     path('submit-score/', views.submit_score, name='submit_score'),
 
-    path('dashboard/', views.dashboard_view, name='quiz_dashboard'),
+    
 
 ]
 

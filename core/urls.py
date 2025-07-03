@@ -7,6 +7,9 @@ from . import views
 app_name = 'core'
 
 urlpatterns = [
+    
+    # Email
+        path("subscribe/", views.subscribe_newsletter, name="subscribe_newsletter"),
 
     #Accueil
     path('', views.home, name='index'),

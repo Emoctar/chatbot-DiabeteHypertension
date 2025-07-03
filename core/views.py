@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import mimetypes
+from venv import logger
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,13 +15,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 import os
 import logging
-
+from django.db.models import Count, Avg
 from accounts.models import User
 from chatbot.models import Conversation, Message
-
-from .models import Resource
+from .utils import notify_subscribers  # ← Ajout
+from .models import NewsletterSubscriber, Resource
 from .forms import ResourceForm
 from core import models
+from quiz.models import QuizSubmission
 
 
 
@@ -40,44 +42,71 @@ def ressources(request):
 
 
 # Admin
-
+from django.db.models import Count, Avg
+from datetime import datetime, timedelta, timezone
 
 def admin_dashboard(request):
     """Vue pour le tableau de bord administrateur avec widget Questions Récentes"""
     
+    # Statistiques quiz
+    quiz_stats = QuizSubmission.objects.aggregate(
+        total=Count('id'),
+        avg_score=Avg('score'),
+        avg_duration=Avg('duration')
+    )
+    
     # Statistiques de base
-    stats = {
-        'users_count': User.objects.filter(user_type='member').count(),
-        'conversations_count': Conversation.objects.count(),
-        'messages_count': Message.objects.count(),
-        
-        'stats_display': {
-            'conversations': {
-                'value': Conversation.objects.count(),
-                'label': 'Conversations',
-                'icon': 'fas fa-comments',
-                'card_class': 'primary'
-            },
-            'users': {
-                'value': User.objects.filter(user_type='member').count(),
-                'label': 'Utilisateurs', 
-                'icon': 'fas fa-users',
-                'card_class': 'secondary'
-            },
-            'messages': {
-                'value': Message.objects.count(),
-                'label': 'Messages',
-                'icon': 'fas fa-envelope',
-                'card_class': 'accent'
-            }
+    stats_display = {
+        'conversations': {
+            'value': Conversation.objects.count(),
+            'label': 'Conversations',
+            'icon': 'fas fa-comments',
+            'card_class': 'primary'
+        },
+        'users': {
+            'value': User.objects.filter(user_type='member').count(),
+            'label': 'Utilisateurs',
+            'icon': 'fas fa-users',
+            'card_class': 'secondary'
+        },
+        'messages': {
+            'value': Message.objects.filter(role='user').count(),
+            'label': 'Messages',
+            'icon': 'fas fa-envelope',
+            'card_class': 'accent'
+        },
+
+        'avg_messages': {
+            'value': round(Message.objects.filter(role='user').count() / max(Conversation.objects.count(), 1), 2),
+            'label': 'Engagement moyen',
+            'icon': 'fas fa-chart-line',
+            'card_class': 'success'
+        },
+        # ✅ Ajout des stats quiz ici :
+        'quiz_total': {
+            'value': quiz_stats['total'],
+            'label': 'Nombre de participations',
+            'icon': 'fas fa-check-circle',
+            'card_class': 'info'
+        },
+        'quiz_avg_score': {
+            'value': f"{quiz_stats['avg_score']:.2f}" if quiz_stats['avg_score'] is not None else "0.00",
+            'label': 'Score moyen',
+            'icon': 'fas fa-percentage',
+            'card_class': 'warning'
+        },
+        'quiz_avg_duration': {
+            'value': f"{quiz_stats['avg_duration']:.2f}" if quiz_stats['avg_duration'] is not None else "0.00",
+            'label': 'Durée moyenne (en sec)',
+            'icon': 'fas fa-clock',
+            'card_class': 'danger'
         }
     }
-    
+
     # Données pour le graphique d'activité (7 derniers jours)
     today = datetime.now(timezone.utc).date()
     activity_data = []
     labels = []
-    
     for i in range(6, -1, -1):
         date = today - timedelta(days=i)
         interactions_count = Message.objects.filter(
@@ -87,17 +116,14 @@ def admin_dashboard(request):
         activity_data.append(interactions_count)
         day_names = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
         labels.append(day_names[date.weekday()])
-    
     chart_data = {
         'labels': labels,
         'data': activity_data
     }
-    
     # Questions récentes (derniers messages utilisateur)
     recent_questions = Message.objects.filter(
         role='user'
     ).select_related('conversation', 'conversation__user').order_by('-created_at')[:10]
-    
     # Formatage des questions récentes pour l'affichage
     formatted_questions = []
     for message in recent_questions:
@@ -108,15 +134,18 @@ def admin_dashboard(request):
             'conversation_id': message.conversation.id,
             'full_content': message.content
         })
-    
+
     context = {
-        'stats': stats,
-        'stats_display': stats['stats_display'],
+        'stats': quiz_stats,
+        'stats_display': stats_display,
         'chart_data': chart_data,
         'recent_questions': formatted_questions
     }
-    
+
     return render(request, 'admin/dashboard.html', context)
+
+
+
 
 
 def get_time_ago(datetime_obj):
@@ -525,67 +554,40 @@ def resources_list(request):
     
     return render(request, 'admin/ressources.html', context)
 
-import logging
-logger = logging.getLogger(__name__)
+
+
 
 @login_required
 def add_resource(request):
-    """Vue pour ajouter une nouvelle ressource"""
+    """Vue pour ajouter une ressource et notifier les abonnés."""
     try:
-        logger.info(f"Méthode de requête: {request.method}")
-        logger.info(f"Données POST: {dict(request.POST)}")
-        logger.info(f"Fichiers: {dict(request.FILES)}")
-        
-        if request.method == 'POST':
-            form = ResourceForm(request.POST, request.FILES)
-            
-            # Debug: afficher toutes les données du formulaire
-            logger.info(f"Données du formulaire:")
-            for field_name, field_value in request.POST.items():
-                logger.info(f"  {field_name}: {field_value}")
-            
-            logger.info(f"Formulaire valide: {form.is_valid()}")
-            
-            if form.is_valid():
-                resource = form.save(commit=False)
-                resource.created_by = request.user
-                resource.save()
-                logger.info(f"Ressource créée avec succès: {resource.id}")
-                
-                messages.success(request, 'Ressource ajoutée avec succès!')
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Ressource ajoutée avec succès!',
-                    'resource_id': resource.id
-                })
-            else:
-                logger.error(f"Erreurs de formulaire: {form.errors}")
-                logger.error(f"Erreurs non-field: {form.non_field_errors()}")
-                
-                # Formatage des erreurs pour un affichage plus clair
-                formatted_errors = {}
-                for field, errors in form.errors.items():
-                    formatted_errors[field] = [str(error) for error in errors]
-                
-                return JsonResponse({
-                    'success': False, 
-                    'errors': formatted_errors,
-                    'message': 'Veuillez corriger les erreurs dans le formulaire.'
-                })
-        
-        return JsonResponse({
-            'success': False, 
-            'error': 'Méthode non autorisée',
-            'message': 'Seules les requêtes POST sont autorisées.'
-        })
-        
+        if request.method != 'POST':
+            return JsonResponse({'success': False, 'error': 'Méthode non autorisée'})
+
+        form = ResourceForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            formatted_errors = {field: [str(e) for e in errors] for field, errors in form.errors.items()}
+            return JsonResponse({'success': False, 'errors': formatted_errors, 'message': 'Veuillez corriger les erreurs.'})
+
+        resource = form.save(commit=False)
+        resource.created_by = request.user
+        resource.save()
+
+        # 🔔 Envoyer email aux abonnés
+        try:
+            notify_subscribers(resource, request)
+        except Exception as e:
+            logger.error("Erreur lors de l'envoi de l'e-mail : %s", e)
+
+        messages.success(request, 'Ressource ajoutée avec succès!')
+        return JsonResponse({'success': True, 'message': 'Ressource ajoutée avec succès!', 'resource_id': resource.id})
+
     except Exception as e:
-        logger.error(f"Erreur dans add_resource: {str(e)}", exc_info=True)
-        return JsonResponse({
-            'success': False, 
-            'error': f'Erreur serveur: {str(e)}',
-            'message': 'Une erreur inattendue s\'est produite.'
-        })
+        logger.exception("Erreur inattendue dans add_resource")
+        return JsonResponse({'success': False, 'error': str(e), 'message': 'Erreur serveur.'})
+
+
 
 @login_required
 def edit_resource(request, resource_id):
@@ -645,3 +647,16 @@ def delete_resource(request, resource_id):
         'success': False, 
         'error': 'Méthode non autorisée'
     })
+    
+
+def subscribe_newsletter(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        consent = request.POST.get("consent") == "on"
+
+        if email:
+            subscriber, _ = NewsletterSubscriber.objects.get_or_create(email=email)
+            subscriber.consented = consent
+            subscriber.save()
+            messages.success(request, "Merci pour votre inscription à la newsletter.")
+        return redirect(request.META.get("HTTP_REFERER", "/"))

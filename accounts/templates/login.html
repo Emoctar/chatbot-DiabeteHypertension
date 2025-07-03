@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,88 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <style>
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f9fafb;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        h1, h2, h3, h4, h5, h6, .font-poppins {
-            font-family: 'Poppins', sans-serif;
-        }
-        input:focus {
-            outline: none;
-        }
-        .custom-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid #1A5F7A;
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-        }
-        .custom-checkbox:checked {
-            background-color: #1A5F7A;
-        }
-        .custom-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 5px;
-            width: 5px;
-            height: 9px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-        .password-toggle {
-            cursor: pointer;
-        }
-        .login-card {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            max-width: 400px;
-            width: 100%;
-        }
-        .error-shake {
-            animation: shake 0.5s;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        .input-error {
-            border-color: #EF4444;
-        }
-        .error-message {
-            color: #EF4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .messages {
-            margin-bottom: 1rem;
-        }
-        .message {
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-        .message.success {
-            background-color: #DEF7EC;
-            color: #03543E;
-        }
-        .message.error {
-            background-color: #FDE8E8;
-            color: #9B1C1C;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/accounts/connexion.css' %}">
 </head>
 <body>
      {% include "partials/sweetAlert/loginLogout.html" %}
@@ -204,25 +124,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Password visibility toggle
-            const passwordToggle = document.querySelector('.password-toggle');
-            const passwordInput = document.getElementById('id_password');
-            
-            passwordToggle.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                
-                if (type === 'password') {
-                    passwordToggle.classList.remove('ri-eye-line');
-                    passwordToggle.classList.add('ri-eye-off-line');
-                } else {
-                    passwordToggle.classList.remove('ri-eye-off-line');
-                    passwordToggle.classList.add('ri-eye-line');
-                }
-            });
-        });
-    </script>
+    <script src="{% static 'js/accounts/connexion.js' %}"></script>
 </body>
 </html>
