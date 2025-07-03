@@ -335,23 +335,19 @@
     </main>
 
     <script>
-
-        //
-            //
-        async function sendMessage(conversationId, message) {
-          try {
-            // Logic to send the message using the provided conversationId
-            await botFramework.sendMessage(conversationId, message);
-          } catch (error) {
-            if (error.code === "ConversationNotFound") { // Handling Microsoft specific error codes
-              console.error("Conversation not found:", conversationId);
-              // Attempt to create a new conversation or notify the user
-              // Re-initialize conversation
-            } else {
-              console.error("Error sending message:", error);
-              // Handle other types of errors
+        // Fonction pour mettre à jour le titre de la conversation dans l'interface
+        function updateConversationTitle(newTitle) {
+            // Mettre à jour le titre dans l'en-tête
+            const headerTitle = document.querySelector('h1.font-poppins');
+            if (headerTitle) {
+                headerTitle.textContent = newTitle;
             }
-          }
+            
+            // Mettre à jour le titre dans la sidebar (conversation active)
+            const activeConversationItem = document.querySelector('.conversation-item.active h3');
+            if (activeConversationItem) {
+                activeConversationItem.textContent = newTitle;
+            }
         }
 
         // Fonction pour envoyer le feedback à l'administrateur
@@ -511,7 +507,7 @@
                         }
                     }
 
-                    // Gestion du bouton copy (existant)
+                    // Gestion du bouton copy
                     const copyButton = event.target.closest('.copy-btn');
                     if (copyButton) {
                         const messageContentElement = copyButton.closest('.chat-message-assistant').querySelector('p');
@@ -535,9 +531,7 @@
                 });
             }
         
-        
-            // Le reste du code reste inchangé...
-        
+            // Envoi de message - VERSION MISE À JOUR avec gestion du titre
             if (messageForm) {
                 messageForm.addEventListener('submit', async function (e) {
                     e.preventDefault();
@@ -584,6 +578,11 @@
                             const data = await response.json();
                             console.log('Réponse reçue:', data);
                             addAssistantMessageToChat(data.message);
+                            
+                            // NOUVEAU: Mettre à jour le titre si il a changé
+                            if (data.conversation_title) {
+                                updateConversationTitle(data.conversation_title);
+                            }
                         } else {
                             let errorMessage = 'Erreur du serveur';
                             try {
@@ -605,48 +604,98 @@
                     }
                 });
             }
-    
 
-        // Mobile sidebar toggles
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const conversationSidebar = document.getElementById('conversation-sidebar');
-        const showSidebarButton = document.getElementById('show-sidebar-button');
+            // Mobile sidebar toggles
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const conversationSidebar = document.getElementById('conversation-sidebar');
+            const showSidebarButton = document.getElementById('show-sidebar-button');
 
-        if (mobileMenuButton && conversationSidebar) {
-            mobileMenuButton.addEventListener('click', () => {
-                conversationSidebar.classList.toggle('hidden');
-                conversationSidebar.classList.toggle('md:block');
-            });
-        }
-        if (showSidebarButton && conversationSidebar) {
-            showSidebarButton.addEventListener('click', () => {
-                conversationSidebar.classList.remove('hidden');
-                conversationSidebar.classList.add('md:block');
-            });
-        }
-        // Close sidebar if clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            if (conversationSidebar && !conversationSidebar.classList.contains('hidden') && !conversationSidebar.contains(event.target) && !mobileMenuButton.contains(event.target) && !showSidebarButton.contains(event.target)) {
-                if (window.innerWidth < 768) { // md breakpoint
-                    conversationSidebar.classList.add('hidden');
+            if (mobileMenuButton && conversationSidebar) {
+                mobileMenuButton.addEventListener('click', () => {
+                    conversationSidebar.classList.toggle('hidden');
+                    conversationSidebar.classList.toggle('md:block');
+                });
+            }
+            if (showSidebarButton && conversationSidebar) {
+                showSidebarButton.addEventListener('click', () => {
+                    conversationSidebar.classList.remove('hidden');
+                    conversationSidebar.classList.add('md:block');
+                });
+            }
+
+            // Close sidebar if clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (conversationSidebar && !conversationSidebar.classList.contains('hidden') && !conversationSidebar.contains(event.target) && !mobileMenuButton.contains(event.target) && !showSidebarButton.contains(event.target)) {
+                    if (window.innerWidth < 768) { // md breakpoint
+                        conversationSidebar.classList.add('hidden');
+                    }
                 }
+            });
+
+            // Handle new conversation button
+            const newConversationBtn = document.getElementById('new-conversation-btn');
+            if (newConversationBtn) {
+                newConversationBtn.addEventListener('click', async () => {
+                    try {
+                        const response = await fetch(`/api/conversation/create/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrftoken
+                            },
+                            body: JSON.stringify({ title: 'Nouvelle Conversation' })
+                        });
+                        if (response.ok) {
+                            const data = await response.json();
+                            // Utiliser l'URL de redirection renvoyée par l'API si elle existe
+                            if (data.redirect_url) {
+                                window.location.href = data.redirect_url;
+                            } else {
+                                window.location.href = `/chat/conversation/${data.id}/`;
+                            }
+                        } else {
+                            console.error('Failed to create new conversation');
+                            alert('Erreur lors de la création d\'une nouvelle conversation.');
+                        }
+                    } catch (error) {
+                        console.error('Error creating new conversation:', error);
+                        alert('Erreur réseau lors de la création d\'une nouvelle conversation.');
+                    }
+                });
+            }
+
+            // Handle suggestion chips
+            const suggestionChipsContainer = document.getElementById('suggestion-chips-container');
+            if (suggestionChipsContainer) {
+                suggestionChipsContainer.addEventListener('click', function(event) {
+                    if (event.target.classList.contains('suggestion-chip')) {
+                        const suggestionText = event.target.textContent.trim();
+                        messageInput.value = suggestionText;
+                        messageForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                    }
+                });
             }
         });
 
+        // Fonctions utilitaires
         function scrollToBottom() {
+            const chatMessagesContainer = document.getElementById('chat-messages-container');
             if (chatMessagesContainer) {
                 chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
             }
         }
-        scrollToBottom(); // Scroll to bottom on page load
+        
+        // Scroll to bottom on page load
+        scrollToBottom();
 
         function addUserMessageToChat(message) {
+            const chatMessagesList = document.getElementById('chat-messages-list');
             if (!chatMessagesList) return;
 
             const messageHTML = `
                 <div class="flex items-start justify-end">
                     <div class="mr-3 chat-message-user p-4 shadow-sm max-w-[85%]">
-                        <p class="text-gray-800">${message}</p>
+                        <p class="text-gray-800">${escapeHtml(message)}</p>
                     </div>
                     <div class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full text-gray-600 flex-shrink-0">
                         <i class="ri-user-line"></i>
@@ -657,6 +706,7 @@
         }
 
         function addAssistantMessageToChat(message) {
+            const chatMessagesList = document.getElementById('chat-messages-list');
             if (!chatMessagesList) return;
 
             const messageHTML = `
@@ -665,7 +715,7 @@
                         <i class="ri-robot-line"></i>
                     </div>
                     <div class="ml-3 chat-message-assistant p-4 shadow-sm max-w-[85%]">
-                        <p class="text-gray-800">${message.replace(/\n/g, '<br>')}</p>
+                        <div class="text-gray-800">${message}</div>
                         <div class="mt-4 flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 <button class="text-gray-500 hover:text-primary transition-colors flex items-center copy-btn">
@@ -675,12 +725,12 @@
                                 </button>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button class="text-gray-500 hover:text-green-500 transition-colors flex items-center">
+                                <button class="text-gray-500 hover:text-green-500 transition-colors flex items-center like-btn">
                                     <div class="w-6 h-6 flex items-center justify-center">
                                         <i class="ri-thumb-up-line"></i>
                                     </div>
                                 </button>
-                                <button class="text-gray-500 hover:text-red-500 transition-colors flex items-center">
+                                <button class="text-gray-500 hover:text-red-500 transition-colors flex items-center dislike-btn">
                                     <div class="w-6 h-6 flex items-center justify-center">
                                         <i class="ri-thumb-down-line"></i>
                                     </div>
@@ -693,128 +743,12 @@
             scrollToBottom();
         }
 
-        if (messageForm) {
-            messageForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const userMessage = messageInput.value.trim();
-
-                if (!userMessage) return;
-                if (!conversationId) {
-                    console.error('Conversation ID not found.');
-                    alert('Erreur: Impossible de trouver l\'identifiant de la conversation.');
-                    return;
-                }
-
-                addUserMessageToChat(userMessage);
-                messageInput.value = '';
-                if (typingIndicator) {
-                    typingIndicator.classList.remove('hidden');
-                }
-                scrollToBottom();
-
-                try {
-                    const response = await fetch(`/api/conversation/${conversationId}/send/`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrftoken
-                        },
-                        body: JSON.stringify({ message: userMessage })
-                    });
-
-                    if (typingIndicator) {
-                        typingIndicator.classList.add('hidden');
-                    }
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        addAssistantMessageToChat(data.message);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error sending message:', errorData);
-                        addAssistantMessageToChat(`Erreur du serveur: ${errorData.error || response.statusText}`);
-                    }
-                } catch (error) {
-                    if (typingIndicator) {
-                        typingIndicator.classList.add('hidden');
-                    }
-                    console.error('Network error:', error);
-                    addAssistantMessageToChat('Erreur de connexion. Veuillez réessayer.');
-                }
-            });
+        // Fonction pour échapper le HTML (sécurité)
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        // Handle suggestion chips
-        const suggestionChipsContainer = document.getElementById('suggestion-chips-container');
-        if (suggestionChipsContainer) {
-            suggestionChipsContainer.addEventListener('click', function(event) {
-                if (event.target.classList.contains('suggestion-chip')) {
-                    const suggestionText = event.target.textContent.trim();
-                    messageInput.value = suggestionText;
-                    messageForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                }
-            });
-        }
-
-        
-        // Handle new conversation button
-        const newConversationBtn = document.getElementById('new-conversation-btn');
-        if (newConversationBtn) {
-            newConversationBtn.addEventListener('click', async () => {
-                try {
-                    const response = await fetch(`/api/conversation/create/`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrftoken
-                        },
-                        body: JSON.stringify({ title: 'Nouvelle Conversation' })
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        // Utiliser l'URL de redirection renvoyée par l'API si elle existe
-                        if (data.redirect_url) {
-                            window.location.href = data.redirect_url;
-                        } else {
-                            window.location.href = `/chat/conversation/${data.id}/`;
-                        }
-                    } else {
-                        console.error('Failed to create new conversation');
-                        alert('Erreur lors de la création d\'une nouvelle conversation.');
-                    }
-                } catch (error) {
-                    console.error('Error creating new conversation:', error);
-                    alert('Erreur réseau lors de la création d\'une nouvelle conversation.');
-                }
-            });
-        }
-
-        // Copy button functionality
-        if (chatMessagesList) {
-            chatMessagesList.addEventListener('click', function(event) {
-                const copyButton = event.target.closest('.copy-btn');
-                if (copyButton) {
-                    const messageContentElement = copyButton.closest('.chat-message-assistant').querySelector('p');
-                    if (messageContentElement) {
-                        const textToCopy = messageContentElement.innerText || messageContentElement.textContent;
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            // Changer l'icône temporairement pour indiquer le succès
-                            const icon = copyButton.querySelector('i');
-                            if (icon) {
-                                const originalIconClass = icon.className;
-                                icon.className = 'ri-check-line';
-                                setTimeout(() => {
-                                    icon.className = originalIconClass;
-                                }, 1500);
-                            }
-                        }).catch(err => {
-                            console.error('Failed to copy text: ', err);
-                        });
-                    }
-                }
-            });
-    }
-});
     </script>
 </body>
 </html>

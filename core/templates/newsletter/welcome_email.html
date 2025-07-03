@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🆕 Nouvelle ressource disponible !</h2>
+        <p><strong>Titre :</strong> {{ title }}</p>
+        <p><strong>Catégorie :</strong> {{ category }}</p>
+        <p><strong>Description :</strong> {{ description }}</p>
+        <p>
+            <a href="{{ link }}" class="btn" target="_blank">📂 Accéder à la ressource</a>
+        </p>
+        <p>Merci de votre fidélité,<br>L’équipe {{ DEFAULT_FROM_EMAIL|default:"notre plateforme" }}</p>
+    </div>
+</body>
+</html>

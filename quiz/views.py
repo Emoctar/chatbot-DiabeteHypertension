@@ -15,12 +15,6 @@ def autoevaluation(request):
     return render(request, 'quiz/autoevaluation.html')
 
 
-
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-import json
-from .models import QuizSubmission
-
 @require_POST
 def submit_score(request):
     data = json.loads(request.body)
@@ -31,15 +25,5 @@ def submit_score(request):
         duration=data['duration']
     )
     return JsonResponse({'status': 'success'})
-
-@staff_member_required
-def dashboard_view(request):
-    stats = QuizSubmission.objects.aggregate(
-        total=Count('id'),
-        avg_score=Avg('score'),
-        avg_duration=Avg('duration')
-    )
-    return render(request, 'quiz/testdashbord.html', {'stats': stats})
-
 
 
