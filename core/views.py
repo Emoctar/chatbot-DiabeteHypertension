@@ -107,7 +107,6 @@ def admin_dashboard(request):
     today = datetime.now(timezone.utc).date()
     activity_data = []
     labels = []
-
     for i in range(6, -1, -1):
         date = today - timedelta(days=i)
         interactions_count = Message.objects.filter(
@@ -117,17 +116,14 @@ def admin_dashboard(request):
         activity_data.append(interactions_count)
         day_names = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
         labels.append(day_names[date.weekday()])
-
     chart_data = {
         'labels': labels,
         'data': activity_data
     }
-
     # Questions récentes (derniers messages utilisateur)
     recent_questions = Message.objects.filter(
         role='user'
     ).select_related('conversation', 'conversation__user').order_by('-created_at')[:10]
-
     # Formatage des questions récentes pour l'affichage
     formatted_questions = []
     for message in recent_questions:
