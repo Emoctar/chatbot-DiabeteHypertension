@@ -12,71 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <style>
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f9fafb;
-        }
-        h1, h2, h3, h4, h5, h6, .font-poppins {
-            font-family: 'Poppins', sans-serif;
-        }
-        input:focus {
-            outline: none;
-        }
-        input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px white inset !important;
-        }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .custom-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #1A5F7A;
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-        }
-        .custom-checkbox:checked {
-            background-color: #1A5F7A;
-        }
-        .custom-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 6px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-        .password-toggle {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6B7280;
-        }
-        .social-login-btn {
-            transition: all 0.3s ease;
-        }
-        .social-login-btn:hover {
-            transform: translateY(-2px);
-        }
-        .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/accounts/register.css' %}">
 </head>
 <body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -218,56 +154,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Password visibility toggle
-            const toggleButtons = document.querySelectorAll('.password-toggle');
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const input = this.previousElementSibling;
-                    const icon = this.querySelector('i');
-                    
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('ri-eye-off-line');
-                        icon.classList.add('ri-eye-line');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('ri-eye-line');
-                        icon.classList.add('ri-eye-off-line');
-                    }
-                });
-            });
-
-            // Password strength indicator
-            const passwordInput = document.getElementById('password');
-            const strengthIndicator = document.querySelector('.h-full.bg-gray-400');
-            
-            if (passwordInput) {
-                passwordInput.addEventListener('input', function() {
-                    const password = this.value;
-                    let strength = 0;
-                    
-                    if (password.length >= 8) strength += 25;
-                    if (password.match(/[a-z]+/)) strength += 25;
-                    if (password.match(/[A-Z]+/)) strength += 25;
-                    if (password.match(/[0-9]+/)) strength += 25;
-                    
-                    strengthIndicator.style.width = strength + '%';
-                    
-                    if (strength <= 25) {
-                        strengthIndicator.classList.remove('bg-yellow-400', 'bg-green-400');
-                        strengthIndicator.classList.add('bg-red-400');
-                    } else if (strength <= 75) {
-                        strengthIndicator.classList.remove('bg-red-400', 'bg-green-400');
-                        strengthIndicator.classList.add('bg-yellow-400');
-                    } else {
-                        strengthIndicator.classList.remove('bg-red-400', 'bg-yellow-400');
-                        strengthIndicator.classList.add('bg-green-400');
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="{% static 'js/accounts/register.js' %}"></script>
 </body>
 </html>

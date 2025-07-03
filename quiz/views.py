@@ -26,14 +26,4 @@ def submit_score(request):
     )
     return JsonResponse({'status': 'success'})
 
-@staff_member_required
-def dashboard_view(request):
-    stats = QuizSubmission.objects.aggregate(
-        total=Count('id'),
-        avg_score=Avg('score'),
-        avg_duration=Avg('duration')
-    )
-    return render(request, 'quiz/testdashbord.html', {'stats': stats})
-
-
 

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -680,10 +682,13 @@
             transform: translate(-50%, 0);
         }
     </style>
+    <link rel="stylesheet" href="{% static 'css/admin/onglets_admin.css' %}">
+    
 </head>
 <body>
     
     <!-- Sidebar -->
+    
     {% include 'partials/admin/sidebar.html' %}
     {% include "partials/sweetAlert/loginLogout.html" %}
 
@@ -696,41 +701,55 @@
             </div>
 
         </header>
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('chatbot')">📊 Chatbot</button>
+            <button class="tab-button" onclick="showTab('quiz')">🧠 Quiz</button>
+        </div>
 
-    
-        
-
-        <!-- Stats Grid -->
-        <div class="stats-grid">
+        <!-- Contenu : Chatbot -->
+        <div id="tab-chatbot" class="tab-content active">
             <div class="stat-card primary">
-                <div class="stat-icon primary">
-                    <i class="fas fa-comments"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-comments"></i></div>
                 <div class="stat-value">{{ stats_display.conversations.value }}</div>
                 <div class="stat-label">{{ stats_display.conversations.label }}</div>
             </div>
             <div class="stat-card secondary">
-                <div class="stat-icon secondary">
-                    <i class="fas fa-users"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
                 <div class="stat-value">{{ stats_display.users.value }}</div>
                 <div class="stat-label">{{ stats_display.users.label }}</div>
             </div>
             <div class="stat-card accent">
-                <div class="stat-icon accent">
-                    <i class="fas fa-envelope"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-envelope"></i></div>
                 <div class="stat-value">{{ stats_display.messages.value }}</div>
                 <div class="stat-label">{{ stats_display.messages.label }}</div>
             </div>
             <div class="stat-card success">
-                <div class="stat-icon success">
-                    <i class="fas fa-chart-line"></i>
-                </div>
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="stat-value">{{ stats_display.avg_messages.value }}</div>
                 <div class="stat-label">{{ stats_display.avg_messages.label }}</div>
             </div>
         </div>
+
+        <!-- Contenu : Quiz -->
+        <div id="tab-quiz" class="tab-content">
+            <div class="stat-card info">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">{{ stats_display.quiz_total.value }}</div>
+                <div class="stat-label">{{ stats_display.quiz_total.label }}</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                <div class="stat-value">{{ stats_display.quiz_avg_score.value }}</div>
+                <div class="stat-label">{{ stats_display.quiz_avg_score.label }}</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value">{{ stats_display.quiz_avg_duration.value }}</div>
+                <div class="stat-label">{{ stats_display.quiz_avg_duration.label }}</div>
+            </div>
+        </div>
+
 
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
@@ -812,18 +831,7 @@
                 </div>
             </div>
 
-            <!-- Taux de satisfaction -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Sentiment des messages</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container pie-chart">
-                    <canvas id="satisfactionChart"></canvas>
-                </div>
-            </div>
+            
 
             <!-- Questions récentes -->
              <!-- Recent Questions Widget -->
@@ -851,9 +859,6 @@
                         </div>
                     </div>
                     <div class="question-actions">
-                        {% comment %} <button class="action-btn view-btn" onclick="viewConversation({{ question.conversation_id }})">
-                            <i class="fas fa-eye"></i>
-                        </button> {% endcomment %}
                         <button class="action-btn details-btn" onclick="showDetails('{{ question.full_content|escapejs }}')">
                             <i class="fas fa-info-circle"></i>
                         </button>
@@ -1011,19 +1016,19 @@
             });
         });
         
-          function showDetails(fullContent) {
+        function showDetails(fullContent) {
             // Afficher le contenu complet dans une modal ou alert
             alert(fullContent);
             // Ou utiliser une modal plus élégante :
             // showModal('Détails de la question', fullContent);
         }
 
-       
 
             // Redimensionner les graphiques après l'initialisation
             setTimeout(resizeCharts, 100);
     
     </script>
+    <script src="{% static 'js/admin/onglet_admin.js' %}"></script>
 </body>
 </html>
 

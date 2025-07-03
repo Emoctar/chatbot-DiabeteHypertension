@@ -140,3 +140,14 @@ class Resource(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+        
+        
+        
+        
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    consented = models.BooleanField(default=False)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email

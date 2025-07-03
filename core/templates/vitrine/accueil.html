@@ -14,105 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <style>
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        body {
-            font-family: 'Open Sans', sans-serif;
-        }
-        h1, h2, h3, h4, h5, h6, .font-poppins {
-            font-family: 'Poppins', sans-serif;
-        }
-        .hero-section {
-            background-size: cover;
-            background-position: center right;
-            position: relative;
-        }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-        input:focus {
-            outline: none;
-        }
-        .step-line {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            height: 2px;
-            background-color: #E5E7EB;
-            z-index: 0;
-        }
-        .testimonial-card {
-            transition: all 0.3s ease;
-        }
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-        }
-        .custom-checkbox {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #1A5F7A;
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-        }
-        .custom-checkbox:checked {
-            background-color: #1A5F7A;
-        }
-        .custom-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 6px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-        .custom-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        .custom-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .switch-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        .switch-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .switch-slider {
-            background-color: #1A5F7A;
-        }
-        input:checked + .switch-slider:before {
-            transform: translateX(26px);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/core/accueil.css' %}">
 </head>
 <body class="bg-white">
     <!-- Header -->
@@ -368,15 +270,18 @@
                 <h2 class="font-poppins text-3xl md:text-4xl font-bold text-gray-900 mb-4">Restez informé</h2>
                 <p class="text-lg text-gray-700 mb-8">Inscrivez-vous à notre newsletter pour recevoir les dernières informations sur le diabète et l'hypertension.</p>
 
-                <div class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
-                    <input type="email" placeholder="Votre adresse email" class="flex-grow px-4 py-3 rounded-button border border-gray-300 focus:border-primary">
-                    <button class="bg-primary text-white px-6 py-3 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-colors font-medium">S'abonner</button>
-                </div>
+                <form method="post" action="{% url 'core:subscribe_newsletter' %}">
+                    {% csrf_token %}
+                    <div class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
+                        <input type="email" name="email" placeholder="Votre adresse email" required class="flex-grow px-4 py-3 rounded-button border border-gray-300 focus:border-primary">
+                        <button type="submit" class="bg-primary text-white px-6 py-3 !rounded-button whitespace-nowrap hover:bg-primary/90 transition-colors font-medium">S'abonner</button>
+                    </div>
+                    <div class="mt-4 flex items-center justify-center">
+                        <input type="checkbox" name="consent" id="consent" class="custom-checkbox">
+                        <label for="consent" class="ml-2 text-sm text-gray-700">J'accepte de recevoir des informations par email</label>
+                    </div>
+                </form>
 
-                <div class="mt-4 flex items-center justify-center">
-                    <input type="checkbox" id="consent" class="custom-checkbox">
-                    <label for="consent" class="ml-2 text-sm text-gray-700">J'accepte de recevoir des informations par email</label>
-                </div>
             </div>
         </div>
     </section>
@@ -458,43 +363,7 @@
     <!-- Footer -->
     {% include 'partials/footer.html' %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // FAQ Accordion
-            const faqButtons = document.querySelectorAll('.faq-section button');
-            faqButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const content = button.nextElementSibling;
-                    const icon = button.querySelector('i');
-
-                    if (content.classList.contains('hidden')) {
-                        content.classList.remove('hidden');
-                        icon.classList.remove('ri-arrow-down-s-line');
-                        icon.classList.add('ri-arrow-up-s-line');
-                    } else {
-                        content.classList.add('hidden');
-                        icon.classList.remove('ri-arrow-up-s-line');
-                        icon.classList.add('ri-arrow-down-s-line');
-                    }
-                });
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const menuButton = document.querySelector('.ri-menu-line').parentElement;
-            const nav = document.querySelector('nav');
-
-            menuButton.addEventListener('click', () => {
-                if (nav.classList.contains('hidden')) {
-                    nav.classList.remove('hidden');
-                    nav.classList.add('flex', 'flex-col', 'absolute', 'top-16', 'left-0', 'right-0', 'bg-white', 'shadow-md', 'p-4', 'space-y-4', 'z-50');
-                } else {
-                    nav.classList.add('hidden');
-                    nav.classList.remove('flex', 'flex-col', 'absolute', 'top-16', 'left-0', 'right-0', 'bg-white', 'shadow-md', 'p-4', 'space-y-4', 'z-50');
-                }
-            });
-        });
-    </script>
+    <!-- Scripts -->
+    <script src ="{% static 'js/core/faqAccueil.js' %}"></script>
 </body>
 </html>

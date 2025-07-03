@@ -1,3 +1,6 @@
+{% load static %}
+<!-- File: core/templates/vitrine/ressource.html -->
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,44 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <style>
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #1f2937;
-        }
-        .search-input:focus {
-            outline: none;
-        }
-        .custom-checkbox {
-            appearance: none;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #d1d5db;
-            border-radius: 4px;
-            cursor: pointer;
-            position: relative;
-        }
-        .custom-checkbox:checked {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-        .custom-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            left: 0.3rem;
-            top: 0.1rem;
-            width: 0.4rem;
-            height: 0.7rem;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-        .resource-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/core/ressource.css' %}">
 </head>
 <body class="bg-gray-50">
     {% include 'partials/header.html' %}
@@ -250,45 +216,7 @@
 
     {% include 'partials/footer.html' %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Search functionality
-            const searchInput = document.querySelector('.search-input');
-            searchInput.addEventListener('focus', function() {
-                this.classList.add('ring-2', 'ring-primary', 'ring-opacity-50');
-            });
-            searchInput.addEventListener('blur', function() {
-                this.classList.remove('ring-2', 'ring-primary', 'ring-opacity-50');
-            });
-
-            // Resource cards hover effect
-            const resourceCards = document.querySelectorAll('.resource-card');
-            resourceCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.classList.add('shadow-md');
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.classList.remove('shadow-md');
-                });
-            });
-
-            // Download buttons
-            const downloadButtons = document.querySelectorAll('button:has(.ri-download-line)');
-            downloadButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="ri-check-line mr-2"></i>Téléchargé';
-                    this.classList.remove('bg-primary');
-                    this.classList.add('bg-green-500');
-
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        this.classList.remove('bg-green-500');
-                        this.classList.add('bg-primary');
-                    }, 2000);
-                });
-            });
-        });
-    </script>
+    <script src="{% static 'js/core/ressource.js' %}"></script>
+    
 </body>
 </html>
