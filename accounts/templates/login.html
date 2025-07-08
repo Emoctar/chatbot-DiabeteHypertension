@@ -16,6 +16,22 @@
 </head>
 <body>
      {% include "partials/sweetAlert/loginLogout.html" %}
+
+    {% if messages %}
+    <div class="mb-4 max-w-lg mx-auto" id="flash-message">
+        {% for message in messages %}
+            <div class="px-4 py-3 rounded text-sm font-medium 
+                        {% if message.tags == 'error' %}
+                            bg-red-100 text-red-700
+                        {% elif message.tags == 'success' %}
+                            bg-green-100 text-green-700
+                        {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
 <div class="login-card bg-white rounded-lg p-8 mx-4 {% if messages %}error-shake{% endif %}">
         <!-- Logo -->
         <div class="text-center mb-8">
@@ -125,5 +141,16 @@
     </div>
 
     <script src="{% static 'js/accounts/connexion.js' %}"></script>
+    <script>
+        setTimeout(() => {
+            const flashMessage = document.getElementById('flash-message');
+            if (flashMessage) {
+                flashMessage.style.transition = 'opacity 0.5s ease';
+                flashMessage.style.opacity = '0';
+                setTimeout(() => flashMessage.remove(), 500);  // Retire l'élément du DOM
+            }
+        }, 2000); // Délai de 2 secondes
+    </script>
+
 </body>
 </html>

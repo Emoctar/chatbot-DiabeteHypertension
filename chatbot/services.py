@@ -208,7 +208,7 @@ class LLMService:
             # Configuration de génération
             generation_config = genai.types.GenerationConfig(
                 temperature=0.5,
-                max_output_tokens=800,
+                max_output_tokens=500,
                 top_p=0.9,
                 top_k=40
             )

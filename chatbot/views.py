@@ -39,6 +39,13 @@ def conversation_view(request, conversation_id):
         'conversations': conversations
     })
 
+@login_required
+def delete_conversation(request, conversation_id):
+    # Supprimer la conversation
+    conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
+    conversation.delete()
+    return redirect('chatbot:chatbot_interface')
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_conversation(request):
