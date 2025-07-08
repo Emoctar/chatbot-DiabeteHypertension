@@ -702,13 +702,14 @@
 
         </header>
         <!-- Onglets -->
-        <div class="tabs">
+        <div class="tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
             <button class="tab-button active" onclick="showTab('chatbot')">📊 Chatbot</button>
             <button class="tab-button" onclick="showTab('quiz')">🧠 Quiz</button>
         </div>
 
         <!-- Contenu : Chatbot -->
         <div id="tab-chatbot" class="tab-content active">
+            <div class="stats-grid" style="margin-bottom: 2rem;">
             <div class="stat-card primary">
                 <div class="stat-icon"><i class="fas fa-comments"></i></div>
                 <div class="stat-value">{{ stats_display.conversations.value }}</div>
@@ -729,10 +730,12 @@
                 <div class="stat-value">{{ stats_display.avg_messages.value }}</div>
                 <div class="stat-label">{{ stats_display.avg_messages.label }}</div>
             </div>
+            </div>
         </div>
 
         <!-- Contenu : Quiz -->
-        <div id="tab-quiz" class="tab-content">
+        <div id="tab-quiz" class="tab-content" style="display: none;">
+            <div class="stats-grid" style="margin-bottom: 2rem;">
             <div class="stat-card info">
                 <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                 <div class="stat-value">{{ stats_display.quiz_total.value }}</div>
@@ -748,131 +751,83 @@
                 <div class="stat-value">{{ stats_display.quiz_avg_duration.value }}</div>
                 <div class="stat-label">{{ stats_display.quiz_avg_duration.label }}</div>
             </div>
+            </div>
         </div>
 
-
         <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Activité quotidienne -->
-            <div class="widget">
-                {% comment %} <div class="widget-header">
-                    <h3 class="widget-title">Activité quotidienne (7 derniers jours)</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container line-chart">
-                    <canvas id="activityChart"></canvas>
-                </div> {% endcomment %}
-            </div>
-
-            <!-- Répartition par catégorie -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Questions par catégorie</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container pie-chart">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-
+        <div class="dashboard-grid" style="align-items: stretch;">
             <!-- Activité par heure -->
-            <div class="widget large">
-                    <div class="widget-header">
-                        <h3 class="widget-title">Activité du Chatbot</h3>
-                        <button class="widget-action">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="activityChart"></canvas>
-                    </div>
-                </div>
-
-            <!-- Évolution mensuelle -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Utilisateurs actifs (6 mois)</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container line-chart">
-                    <canvas id="monthlyChart"></canvas>
-                </div>
+            <div class="widget large" style="min-width: 0;">
+            <div class="widget-header">
+                <h3 class="widget-title">Activité du Chatbot</h3>
+                <button class="widget-action">
+                <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
-
-            <!-- Top utilisateurs -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Top 10 utilisateurs actifs</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container horizontal-bar">
-                    <canvas id="topUsersChart"></canvas>
-                </div>
+            <div class="chart-container">
+                <canvas id="activityChart"></canvas>
             </div>
-
-            <!-- Durée des conversations -->
-            <div class="widget">
-                <div class="widget-header">
-                    <h3 class="widget-title">Durée des conversations</h3>
-                    <button class="widget-action">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                </div>
-                <div class="chart-container doughnut-chart">
-                    <canvas id="durationChart"></canvas>
-                </div>
             </div>
-
-            
 
             <!-- Questions récentes -->
-             <!-- Recent Questions Widget -->
-        <div class="widget">
+            <div class="widget" style="min-width: 0; display: flex; flex-direction: column;">
             <div class="widget-header">
                 <h3 class="widget-title">Questions Récentes</h3>
                 <button class="widget-action">
-                    <i class="fas fa-refresh"></i>
+                <i class="fas fa-refresh"></i>
                 </button>
             </div>
-            <div class="recent-questions-list">
+            <div class="recent-questions-list" style="flex: 1;">
                 {% for question in recent_questions %}
                 <div class="question-item">
-                    <div class="question-content">
-                        <p class="question-text">{{ question.content }}</p>
-                        <div class="question-meta">
-                            <span class="user-name">
-                                <i class="fas fa-user"></i>
-                                {{ question.user }}
-                            </span>
-                            <span class="question-time">
-                                <i class="fas fa-clock"></i>
-                                {{ question.time_ago }}
-                            </span>
-                        </div>
+                <div class="question-content">
+                    <p class="question-text">{{ question.content }}</p>
+                    <div class="question-meta">
+                    <span class="user-name">
+                        <i class="fas fa-user"></i>
+                        {{ question.user }}
+                    </span>
+                    <span class="question-time">
+                        <i class="fas fa-clock"></i>
+                        {{ question.time_ago }}
+                    </span>
                     </div>
-                    <div class="question-actions">
-                        <button class="action-btn details-btn" onclick="showDetails('{{ question.full_content|escapejs }}')">
-                            <i class="fas fa-info-circle"></i>
-                        </button>
-                    </div>
+                </div>
+                <div class="question-actions">
+                    <button class="action-btn details-btn" onclick="showDetails('{{ question.full_content|escapejs }}')">
+                    <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
                 </div>
                 {% empty %}
                 <div class="no-questions">
-                    <i class="fas fa-question-circle"></i>
-                    <p>Aucune question récente</p>
+                <i class="fas fa-question-circle"></i>
+                <p>Aucune question récente</p>
                 </div>
                 {% endfor %}
             </div>
+            </div>
         </div>
-        </div>
+
+        <script>
+            // Onglet JS pour éviter le chevauchement
+            function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(function(el) {
+                el.style.display = 'none';
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            document.getElementById('tab-' + tab).style.display = 'block';
+            document.getElementById('tab-' + tab).classList.add('active');
+            if (tab === 'chatbot') {
+                document.querySelector('.tab-button:nth-child(1)').classList.add('active');
+            } else {
+                document.querySelector('.tab-button:nth-child(2)').classList.add('active');
+            }
+            }
+        </script>
     </main>
 
     <script>
